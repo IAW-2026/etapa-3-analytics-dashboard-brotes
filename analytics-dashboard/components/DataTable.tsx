@@ -10,7 +10,7 @@ interface DataTableProps<T> {
   keyField: keyof T;
 }
 
-export default function DataTable<T extends Record<string, unknown>>({
+export default function DataTable<T extends object>({
   columns,
   data,
   keyField,
@@ -33,7 +33,7 @@ export default function DataTable<T extends Record<string, unknown>>({
         <tbody>
           {data.map((row) => (
             <tr
-              key={String(row[keyField])}
+              key={String((row as Record<string, unknown>)[keyField as string])}
               className="hover:bg-[#F5F2EA] transition-colors"
             >
               {columns.map((col) => (
@@ -43,7 +43,7 @@ export default function DataTable<T extends Record<string, unknown>>({
                 >
                   {col.render
                     ? col.render(row)
-                    : String(row[col.key as keyof T] ?? "")}
+                    : String((row as Record<string, unknown>)[col.key as string] ?? "")}
                 </td>
               ))}
             </tr>
