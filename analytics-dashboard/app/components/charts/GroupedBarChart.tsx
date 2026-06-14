@@ -17,19 +17,19 @@ interface Series {
   color: string;
 }
 
-interface StackedBarChartProps {
+interface GroupedBarChartProps {
   data: Record<string, string | number>[];
   labelKey: string;
   series: Series[];
   height?: number;
 }
 
-export default function StackedBarChart({
+export default function GroupedBarChart({
   data,
   labelKey,
   series,
-  height = 220,
-}: StackedBarChartProps) {
+  height = 200,
+}: GroupedBarChartProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
@@ -45,15 +45,8 @@ export default function StackedBarChart({
             return <span style={{ fontSize: 11, color: "#4C6B3D" }}>{s?.label ?? value}</span>;
           }}
         />
-        {series.map((s, i) => (
-          <Bar
-            key={s.key}
-            dataKey={s.key}
-            stackId="a"
-            fill={s.color}
-            radius={i === series.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
-            name={s.key}
-          />
+        {series.map((s) => (
+          <Bar key={s.key} dataKey={s.key} fill={s.color} radius={[3, 3, 0, 0]} name={s.key} />
         ))}
       </BarChart>
     </ResponsiveContainer>
