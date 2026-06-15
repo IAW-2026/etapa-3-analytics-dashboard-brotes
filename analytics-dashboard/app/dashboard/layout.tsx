@@ -16,6 +16,12 @@ export default async function DashboardLayout({
         sellerOnline={data.meta.sellerAppOnline}
         paymentsOnline={data.meta.paymentsAppOnline}
         actualizadoEn={data.meta.actualizadoEn}
+        buyerError={data.meta.buyerError}
+        sellerError={data.meta.sellerError}
+        paymentsError={data.meta.paymentsError}
+        buyerLatencyMs={data.meta.buyerLatencyMs}
+        sellerLatencyMs={data.meta.sellerLatencyMs}
+        paymentsLatencyMs={data.meta.paymentsLatencyMs}
       />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />

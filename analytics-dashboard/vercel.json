@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "env": {
+    "BUYER_APP_URL": "",
+    "SELLER_APP_URL": "",
+    "PAYMENTS_APP_URL": "",
+    "ANALYTICS_API_KEY": ""
+  }
+}

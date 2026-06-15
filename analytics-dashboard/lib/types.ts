@@ -124,6 +124,13 @@ export interface PaymentsStats {
 
 // ─── Consolidado ──────────────────────────────────────────────────────────────
 
+export type FetchErrorReason =
+  | "url_not_configured"
+  | "timeout"
+  | "http_error"
+  | "network_error"
+  | "parse_error";
+
 export interface DashboardData {
   buyer: BuyerStats;
   seller: SellerStats;
@@ -133,5 +140,12 @@ export interface DashboardData {
     sellerAppOnline: boolean;
     paymentsAppOnline: boolean;
     actualizadoEn: string;
+    // Info de error y latencia por app (opcionales, presentes cuando offline)
+    buyerError?: FetchErrorReason;
+    sellerError?: FetchErrorReason;
+    paymentsError?: FetchErrorReason;
+    buyerLatencyMs?: number;
+    sellerLatencyMs?: number;
+    paymentsLatencyMs?: number;
   };
 }
