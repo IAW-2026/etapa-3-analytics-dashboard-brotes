@@ -160,7 +160,7 @@ export default async function ResumenPage() {
             color="#4C6B3D"
             height={180}
             horizontal
-            tickFormatter={(v) => `${v}%`}
+            formatStyle="currency-k"
           />
         </ChartCard>
       </div>

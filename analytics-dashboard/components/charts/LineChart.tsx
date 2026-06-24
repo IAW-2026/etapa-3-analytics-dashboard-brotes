@@ -11,6 +11,7 @@ import {
   Area,
   AreaChart,
 } from "recharts";
+import { TICK_FORMATTERS, type FormatStyle } from "./formatters";
 
 interface LineChartProps {
   data: Record<string, string | number>[];
@@ -19,7 +20,7 @@ interface LineChartProps {
   color?: string;
   height?: number;
   filled?: boolean;
-  tickFormatter?: (v: number) => string;
+  formatStyle?: FormatStyle;   // ← reemplaza a tickFormatter
 }
 
 export default function SimpleLineChart({
@@ -29,8 +30,10 @@ export default function SimpleLineChart({
   color = "#4C6B3D",
   height = 200,
   filled = false,
-  tickFormatter,
+  formatStyle,
 }: LineChartProps) {
+  const tickFormatter = formatStyle ? TICK_FORMATTERS[formatStyle] : undefined;
+
   const common = {
     data,
     margin: { top: 4, right: 4, left: 0, bottom: 0 },

@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { TICK_FORMATTERS, type FormatStyle } from "./formatters";
 
 interface SimpleBarChartProps {
   data: Record<string, string | number>[];
@@ -17,7 +18,7 @@ interface SimpleBarChartProps {
   color?: string;
   height?: number;
   horizontal?: boolean;
-  tickFormatter?: (v: number) => string;
+  formatStyle?: FormatStyle;   // ← reemplaza a tickFormatter
 }
 
 export default function SimpleBarChart({
@@ -27,8 +28,10 @@ export default function SimpleBarChart({
   color = "#4C6B3D",
   height = 200,
   horizontal = false,
-  tickFormatter,
+  formatStyle,
 }: SimpleBarChartProps) {
+  const tickFormatter = formatStyle ? TICK_FORMATTERS[formatStyle] : undefined;
+
   if (horizontal) {
     return (
       <ResponsiveContainer width="100%" height={height}>

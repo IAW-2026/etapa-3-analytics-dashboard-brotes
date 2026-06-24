@@ -148,7 +148,7 @@ export default async function CatalogoPage() {
             color="#A67C52"
             height={200}
             filled
-            tickFormatter={(v) => `$${(v / 1000).toFixed(1)}K`}
+            formatStyle="currency-k"
           />
         </ChartCard>
       </div>
@@ -165,7 +165,7 @@ export default async function CatalogoPage() {
             labelKey="categoria"
             color="#4C6B3D"
             height={180}
-            tickFormatter={formatARS}
+            formatStyle="currency-ars"
           />
         </ChartCard>
       </div>

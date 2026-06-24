@@ -159,7 +159,7 @@ export default async function VentasPage() {
             color="#4C6B3D"
             height={180}
             horizontal
-            tickFormatter={(v) => `$${v}K`}
+            formatStyle="currency-k"
           />
         </ChartCard>
       </div>
