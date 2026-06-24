@@ -71,7 +71,6 @@ export interface Vendedor {
   ciudad: string;
   totalProductos: number;
   ventasMes: number;
-  calificacion: number;
   estado: "activo" | "nuevo" | "inactivo";
 }
 

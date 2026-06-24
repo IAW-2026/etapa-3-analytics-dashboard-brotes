@@ -117,13 +117,13 @@ export const mockSellerStats: SellerStats = {
   ],
 
   vendedores: [
-    { id: "v1", nombre: "Vivero El Ceibo", ciudad: "Bahía Blanca", totalProductos: 87, ventasMes: 892400, calificacion: 4.8, estado: "activo" },
-    { id: "v2", nombre: "Raíces Vivas", ciudad: "Buenos Aires", totalProductos: 124, ventasMes: 734200, calificacion: 4.7, estado: "activo" },
-    { id: "v3", nombre: "Verde Nativo", ciudad: "Rosario", totalProductos: 56, ventasMes: 421000, calificacion: 4.5, estado: "activo" },
-    { id: "v4", nombre: "Brotes del Sur", ciudad: "Mar del Plata", totalProductos: 43, ventasMes: 318900, calificacion: 4.6, estado: "activo" },
-    { id: "v5", nombre: "La Selva Urbana", ciudad: "Córdoba", totalProductos: 92, ventasMes: 287300, calificacion: 4.3, estado: "activo" },
-    { id: "v6", nombre: "Cactáceas Finas", ciudad: "Mendoza", totalProductos: 31, ventasMes: 198700, calificacion: 4.9, estado: "activo" },
-    { id: "v7", nombre: "El Jardín Norteño", ciudad: "Salta", totalProductos: 28, ventasMes: 112400, calificacion: 4.1, estado: "nuevo" },
+    { id: "v1", nombre: "Vivero El Ceibo", ciudad: "Bahía Blanca", totalProductos: 87, ventasMes: 892400, estado: "activo" },
+    { id: "v2", nombre: "Raíces Vivas", ciudad: "Buenos Aires", totalProductos: 124, ventasMes: 734200, estado: "activo" },
+    { id: "v3", nombre: "Verde Nativo", ciudad: "Rosario", totalProductos: 56, ventasMes: 421000, estado: "activo" },
+    { id: "v4", nombre: "Brotes del Sur", ciudad: "Mar del Plata", totalProductos: 43, ventasMes: 318900, estado: "activo" },
+    { id: "v5", nombre: "La Selva Urbana", ciudad: "Córdoba", totalProductos: 92, ventasMes: 287300, estado: "activo" },
+    { id: "v6", nombre: "Cactáceas Finas", ciudad: "Mendoza", totalProductos: 31, ventasMes: 198700, estado: "activo" },
+    { id: "v7", nombre: "El Jardín Norteño", ciudad: "Salta", totalProductos: 28, ventasMes: 112400,  estado: "nuevo" },
   ],
 };
 

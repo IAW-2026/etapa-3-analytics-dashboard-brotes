@@ -77,11 +77,9 @@ export default function Topbar({
   return (
     <header className="bg-[#243B27] flex items-center justify-between px-6 h-13 flex-shrink-0">
       <div className="flex items-center gap-2">
-        <Image src="/logo-brotes.png" alt="Brotes" width={20} height={20} />
-        <span className="text-[#CDE5C1] text-sm font-medium tracking-wide">
-          brotes
-        </span>
-        <span className="text-[#7BA05D] text-[10px] font-normal tracking-widest uppercase border-l border-[#4C6B3D] pl-2.5 ml-1">
+        <Image src="/logo-icono.png" alt="Brotes" width={44} height={44} className="h-10 w-10" />
+        <Image src="/logo-texto.png" alt="brötes" width={140} height={36} className="h-6 w-auto" />
+        <span className="text-[#5a7350] text-sm font-bold tracking-widest uppercase border-l border-[#4C6B3D] pl-2.5 ml-1">
           analytics
         </span>
       </div>

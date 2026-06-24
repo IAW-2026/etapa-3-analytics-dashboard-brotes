@@ -1,74 +1,5 @@
 import type { DashboardData } from "./types";
 
-// ─── Calificación promedio del sistema ────────────────────────────────────────
-// Ponderada por volumen de ventas: los vendedores con más ventas pesan más
-
-export interface CalificacionPromedio {
-  promedioPonderado: number;     // calificación ponderada por ventas
-  promedioSimple: number;        // promedio aritmético simple
-  totalVendedoresConCalif: number;
-  distribucion: {
-    rango: string;               // "5 ★", "4 ★", etc.
-    cantidad: number;
-    porcentaje: number;
-  }[];
-}
-
-export function calcularCalificacionPromedio(
-  data: DashboardData
-): CalificacionPromedio {
-  const vendedores = data.seller.vendedores.filter((v) => v.calificacion > 0);
-
-  if (vendedores.length === 0) {
-    return {
-      promedioPonderado: 0,
-      promedioSimple: 0,
-      totalVendedoresConCalif: 0,
-      distribucion: [],
-    };
-  }
-
-  // Promedio simple
-  const promedioSimple =
-    vendedores.reduce((sum, v) => sum + v.calificacion, 0) / vendedores.length;
-
-  // Promedio ponderado por ventas del mes
-  const totalVentas = vendedores.reduce((sum, v) => sum + v.ventasMes, 0);
-  const promedioPonderado =
-    totalVentas === 0
-      ? promedioSimple
-      : vendedores.reduce(
-          (sum, v) => sum + v.calificacion * (v.ventasMes / totalVentas),
-          0
-        );
-
-  // Distribución por rangos (5★, 4★, 3★, <3★)
-  const rangos = [
-    { label: "5 ★",  min: 4.8, max: 5.0 },
-    { label: "4-5 ★", min: 4.0, max: 4.8 },
-    { label: "3-4 ★", min: 3.0, max: 4.0 },
-    { label: "< 3 ★", min: 0,   max: 3.0 },
-  ];
-
-  const distribucion = rangos.map(({ label, min, max }) => {
-    const cantidad = vendedores.filter(
-      (v) => v.calificacion >= min && v.calificacion < max
-    ).length;
-    return {
-      rango: label,
-      cantidad,
-      porcentaje: Math.round((cantidad / vendedores.length) * 100),
-    };
-  });
-
-  return {
-    promedioPonderado: Math.round(promedioPonderado * 10) / 10,
-    promedioSimple: Math.round(promedioSimple * 10) / 10,
-    totalVendedoresConCalif: vendedores.length,
-    distribucion,
-  };
-}
-
 // ─── Usuarios activos ─────────────────────────────────────────────────────────
 // "Activo" = comprador con al menos un pedido no cancelado en los últimos 30 días
 
@@ -138,7 +69,6 @@ export function calcularUsuariosActivos(
 // ─── Resumen ejecutivo (combina ambas métricas) ───────────────────────────────
 
 export interface ResumenMetricas {
-  calificacion: CalificacionPromedio;
   usuariosActivos: UsuariosActivosMetrica;
   ingresosConfirmados: number;
   ticketPromedio: number;
@@ -149,7 +79,6 @@ export interface ResumenMetricas {
 }
 
 export function calcularResumenMetricas(data: DashboardData): ResumenMetricas {
-  const calificacion = calcularCalificacionPromedio(data);
   const usuariosActivos = calcularUsuariosActivos(data);
 
   const totalPedidos = data.buyer.distribucionEstadosPedidos.reduce(
@@ -166,7 +95,6 @@ export function calcularResumenMetricas(data: DashboardData): ResumenMetricas {
       : Math.round((pedidosEntregados / totalPedidos) * 100);
 
   return {
-    calificacion,
     usuariosActivos,
     ingresosConfirmados: data.payments.ingresosConfirmados,
     ticketPromedio: data.payments.ticketPromedio,

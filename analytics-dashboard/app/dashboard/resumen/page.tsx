@@ -63,7 +63,7 @@ export default async function ResumenPage() {
       </div>
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-5">
         <KpiCard
           label="Ingresos confirmados"
           value={formatARS(payments.ingresosConfirmados)}
@@ -87,12 +87,6 @@ export default async function ResumenPage() {
           value={String(seller.vendedoresActivos)}
           delta={`de ${seller.totalVendedores} registrados`}
           deltaType="neutral"
-        />
-        <KpiCard
-          label="Calificación prom."
-          value="4.6 ★"
-          delta="+0.2 vs mes anterior"
-          deltaType="up"
         />
         <KpiCard
           label="Tasa de entrega"

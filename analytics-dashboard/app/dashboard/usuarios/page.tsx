@@ -31,11 +31,6 @@ const vendedoresColumns: {
     render: (r) => formatARS(r.ventasMes),
   },
   {
-    key: "calificacion",
-    header: "Calificación",
-    render: (r) => `⭐ ${r.calificacion.toFixed(1)}`,
-  },
-  {
     key: "estado",
     header: "Estado",
     render: (r) => <EstadoBadge estado={r.estado} />,
