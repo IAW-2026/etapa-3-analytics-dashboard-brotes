@@ -3,9 +3,9 @@ import KpiCard from "@/components/KpiCard";
 import ChartCard from "@/components/ChartCard";
 import DataTable from "@/components/DataTable";
 import EstadoBadge from "@/components/EstadoBadge";
-import DonutChart from "@/components/charts/DonutChart";
 import SimpleLineChart from "@/components/charts/LineChart";
 import type { Vendedor } from "@/lib/types";
+import DonutWithLegend from "@/components/DonutWithLegend";
 
 function formatARS(n: number) {
   if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`;
@@ -26,11 +26,6 @@ const vendedoresColumns: {
   { key: "ciudad", header: "Ciudad" },
   { key: "totalProductos", header: "Productos" },
   {
-    key: "ventasMes",
-    header: "Ventas (mes)",
-    render: (r) => formatARS(r.ventasMes),
-  },
-  {
     key: "estado",
     header: "Estado",
     render: (r) => <EstadoBadge estado={r.estado} />,
@@ -40,7 +35,7 @@ const vendedoresColumns: {
 export default async function UsuariosPage() {
   const { buyer, seller } = await fetchDashboardData();
 
-  const donutData = [
+  const donutCompradoresData = [
     {
       label: "Activos",
       value: Math.round((buyer.compradoresActivos / buyer.totalCompradores) * 100),
@@ -69,6 +64,23 @@ export default async function UsuariosPage() {
     acc.push({ semana: `Sem ${i + 1}`, total: prev + v });
     return acc;
   }, []);
+
+  const vendedoresActivos = seller.vendedores.filter((v) => v.estado === "activo").length;
+  const vendedoresInactivos = seller.vendedores.filter((v) => v.estado === "inactivo").length;
+  const totalVendedoresConteo = vendedoresActivos + vendedoresInactivos;
+
+  const donutVendedoresData = [
+    {
+      label: "Activos",
+      value: totalVendedoresConteo === 0 ? 0 : Math.round((vendedoresActivos / totalVendedoresConteo) * 100),
+      color: "#4C6B3D",
+    },
+    {
+      label: "Inactivos",
+      value: totalVendedoresConteo === 0 ? 0 : Math.round((vendedoresInactivos / totalVendedoresConteo) * 100),
+      color: "#D9D9D4",
+    },
+  ];
 
   return (
     <div>
@@ -120,21 +132,7 @@ export default async function UsuariosPage() {
           title="Estado de compradores"
           subtitle="Buyer App — distribución de cuentas"
         >
-          <DonutChart data={donutData} />
-          <div className="mt-3 space-y-1">
-            {donutData.map((d) => (
-              <div
-                key={d.label}
-                className="flex items-center gap-1.5 text-[11px] text-[#4C6B3D]"
-              >
-                <span
-                  className="w-2 h-2 rounded-sm flex-shrink-0"
-                  style={{ background: d.color }}
-                />
-                {d.label} — {d.value}%
-              </div>
-            ))}
-          </div>
+          <DonutWithLegend data={donutCompradoresData} />
         </ChartCard>
 
         <ChartCard
@@ -152,19 +150,25 @@ export default async function UsuariosPage() {
         </ChartCard>
       </div>
 
-      {/* Tabla vendedores */}
-      <div className="bg-white border border-[#CDE5C1] rounded-xl p-4">
-        <p className="text-sm font-medium text-[#243B27] mb-0.5">
-          Vendedores registrados
-        </p>
-        <p className="text-[11px] text-[#7BA05D] mb-3">
-          Seller App — actividad y métricas
-        </p>
-        <DataTable
-          columns={vendedoresColumns}
-          data={seller.vendedores}
-          keyField="id"
-        />
+      {/* Vendedores: tabla + estado */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 bg-white border border-[#CDE5C1] rounded-xl p-4">
+          <p className="text-sm font-medium text-[#243B27] mb-0.5">
+            Vendedores registrados
+          </p>
+          <p className="text-[11px] text-[#7BA05D] mb-3">
+            Seller App — actividad y métricas
+          </p>
+          <DataTable
+            columns={vendedoresColumns}
+            data={seller.vendedores}
+            keyField="id"
+          />
+        </div>
+
+        <ChartCard title="Estado de vendedores" subtitle="Seller App — distribución de cuentas">
+          <DonutWithLegend data={donutVendedoresData} />
+        </ChartCard>
       </div>
     </div>
   );

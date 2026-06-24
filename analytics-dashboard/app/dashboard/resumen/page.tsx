@@ -2,8 +2,8 @@ import { fetchDashboardData } from "@/lib/api";
 import KpiCard from "@/components/KpiCard";
 import ChartCard from "@/components/ChartCard";
 import IngresosChart from "@/components/charts/IngresosChart";
-import DonutChart from "@/components/charts/DonutChart";
 import SimpleBarChart from "@/components/charts/BarChart";
+import DonutWithLegend from "@/components/DonutWithLegend";
 
 function formatARS(n: number) {
   if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`;
@@ -116,15 +116,7 @@ export default async function ResumenPage() {
         </div>
 
         <ChartCard title="Estado de pedidos" subtitle="Buyer App — distribución actual">
-          <DonutChart data={donutData} />
-          <div className="mt-3 space-y-1">
-            {donutData.map((d) => (
-              <div key={d.label} className="flex items-center gap-1.5 text-[11px] text-[#4C6B3D]">
-                <span className="w-2 h-2 rounded-sm flex-shrink-0" style={{ background: d.color }} />
-                <span className="capitalize">{d.label} — {d.value}%</span>
-              </div>
-            ))}
-          </div>
+          <DonutWithLegend data={donutData} capitalizeLabels />
         </ChartCard>
       </div>
 
