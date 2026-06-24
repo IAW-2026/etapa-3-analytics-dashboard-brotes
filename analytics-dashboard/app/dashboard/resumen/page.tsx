@@ -7,11 +7,11 @@ import DonutWithLegend from "@/components/DonutWithLegend";
 import { formatARS } from "@/lib/metrics";
 
 const ESTADO_COLORS: Record<string, string> = {
-  entregado:  "#4C6B3D",
-  enviado:    "#7BA05D",
+  entregado: "#4C6B3D",
+  enviado: "#7BA05D",
   confirmado: "#A67C52",
-  pendiente:  "#CDE5C1",
-  cancelado:  "#E07A5F",
+  pendiente: "#CDE5C1",
+  cancelado: "#E07A5F",
 };
 
 const CAT_COLORS = ["#4C6B3D", "#7BA05D", "#A67C52", "#D9D9D4", "#E07A5F"];
@@ -41,7 +41,8 @@ export default async function ResumenPage() {
       <div className="mb-5">
         <h1 className="text-lg font-medium text-[#243B27]">Resumen general</h1>
         <p className="text-xs text-[#4C6B3D]">
-          Vista consolidada de las tres aplicaciones del sistema — Buyer · Seller · Payments
+          Vista consolidada de las tres aplicaciones del sistema — Buyer ·
+          Seller · Payments
         </p>
       </div>
 
@@ -51,7 +52,10 @@ export default async function ResumenPage() {
           { label: "Seller App", cls: "bg-[#D9D9D4] text-[#243B27]" },
           { label: "Payments App", cls: "bg-[#E8E2D6] text-[#243B27]" },
         ].map((b) => (
-          <span key={b.label} className={`text-[11px] font-medium px-3 py-1 rounded-full ${b.cls}`}>
+          <span
+            key={b.label}
+            className={`text-[11px] font-medium px-3 py-1 rounded-full ${b.cls}`}
+          >
             {b.label}
           </span>
         ))}
@@ -67,7 +71,9 @@ export default async function ResumenPage() {
         />
         <KpiCard
           label="Pedidos totales"
-          value={buyer.distribucionEstadosPedidos.reduce((s, d) => s + d.cantidad, 0).toLocaleString("es-AR")}
+          value={buyer.distribucionEstadosPedidos
+            .reduce((s, d) => s + d.cantidad, 0)
+            .toLocaleString("es-AR")}
           delta="+12% vs mes anterior"
           deltaType="up"
         />
@@ -110,7 +116,10 @@ export default async function ResumenPage() {
           </ChartCard>
         </div>
 
-        <ChartCard title="Estado de pedidos" subtitle="Buyer App — distribución actual">
+        <ChartCard
+          title="Estado de pedidos"
+          subtitle="Buyer App — distribución actual"
+        >
           <DonutWithLegend data={donutData} capitalizeLabels />
         </ChartCard>
       </div>
@@ -135,7 +144,10 @@ export default async function ResumenPage() {
           subtitle="Seller App — ventas por tipo de producto"
         >
           <SimpleBarChart
-            data={catData.map((c) => ({ categoria: c.categoria, porcentaje: c.porcentaje }))}
+            data={catData.map((c) => ({
+              categoria: c.categoria,
+              porcentaje: c.porcentaje,
+            }))}
             dataKey="porcentaje"
             labelKey="categoria"
             color="#4C6B3D"

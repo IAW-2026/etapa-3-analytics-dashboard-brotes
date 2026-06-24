@@ -53,10 +53,10 @@ export default function SimpleLineChart({
         axisLine={false}
         tickLine={false}
         width={48}
-        tickFormatter={tickFormatter}
+        tickFormatter={formatter}
       />
       <Tooltip
-        formatter={tickFormatter ? (v) => tickFormatter(Number(v)) : undefined}             
+        formatter={formatter ? (v) => formatter(Number(v)) : undefined}             
         contentStyle={{ background: "#fff", border: "1px solid #CDE5C1", borderRadius: 8, fontSize: 12 }}
       />
     </>

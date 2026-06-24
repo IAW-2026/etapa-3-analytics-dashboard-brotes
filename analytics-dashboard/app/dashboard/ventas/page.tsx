@@ -57,7 +57,7 @@ export default async function VentasPage() {
 
   const topVendedoresData = seller.topVendedores.map((v) => ({
     nombre: v.nombre,
-    ingresos: v.ingresos,
+    ingresos: v.ingresos * 1000,
   }));
 
   return (
