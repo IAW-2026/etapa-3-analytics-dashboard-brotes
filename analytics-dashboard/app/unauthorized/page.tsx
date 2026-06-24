@@ -1,9 +1,11 @@
 import { SignOutButton } from "@clerk/nextjs";
+import Image from "next/image";
 
 export default function UnauthorizedPage() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-[var(--color-arena)] px-4">
       <div className="bg-[var(--color-verde-suave)] border border-[var(--color-verde-brote)] rounded-xl p-10 max-w-md w-full text-center shadow-sm">
+        <Image src="/logo-brotes.png" alt="Brotes" width={40} height={40} className="mx-auto mb-2" />
         <span className="text-5xl block mb-4">🔒</span>
 
         <h1 className="text-xl font-bold text-[var(--color-verde-profundo)] mb-2 tracking-tight">

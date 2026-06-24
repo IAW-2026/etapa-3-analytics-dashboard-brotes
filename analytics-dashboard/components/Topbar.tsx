@@ -1,4 +1,5 @@
 import type { FetchErrorReason } from "@/lib/types";
+import Image from "next/image";
 
 const ERROR_LABELS: Record<FetchErrorReason, string> = {
   url_not_configured: "sin configurar",
@@ -76,21 +77,7 @@ export default function Topbar({
   return (
     <header className="bg-[#243B27] flex items-center justify-between px-6 h-13 flex-shrink-0">
       <div className="flex items-center gap-2">
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#CDE5C1"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M12 2a9 9 0 0 1 9 9c0 4.5-3 8.5-7 10.5" />
-          <path d="M12 2a9 9 0 0 0-9 9c0 4.5 3 8.5 7 10.5" />
-          <path d="M12 2v20" />
-          <path d="M3 9h18" />
-        </svg>
+        <Image src="/logo-brotes.png" alt="Brotes" width={20} height={20} />
         <span className="text-[#CDE5C1] text-sm font-medium tracking-wide">
           brotes
         </span>
