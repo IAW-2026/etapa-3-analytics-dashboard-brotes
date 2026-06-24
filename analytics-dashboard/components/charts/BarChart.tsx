@@ -46,7 +46,7 @@ export default function SimpleBarChart({
             tick={{ fontSize: 10, fill: "#7BA05D" }}
             axisLine={false}
             tickLine={false}
-            tickFormatter={formatter}
+            tickFormatter={tickFormatter}
           />
           <YAxis
             dataKey={labelKey}
@@ -57,7 +57,7 @@ export default function SimpleBarChart({
             width={72}
           />
           <Tooltip
-            formatter={formatter ? (v) => formatter(Number(v)) : undefined}
+            formatter={tickFormatter ? (v) => tickFormatter(Number(v)) : undefined}
             contentStyle={{ background: "#fff", border: "1px solid #CDE5C1", borderRadius: 8, fontSize: 12 }}
           />
           <Bar dataKey={dataKey} fill={color} radius={[0, 4, 4, 0]} />
@@ -81,10 +81,10 @@ export default function SimpleBarChart({
           axisLine={false}
           tickLine={false}
           width={32}
-          tickFormatter={formatter}
+          tickFormatter={tickFormatter}
         />
         <Tooltip
-          formatter={formatter ? (v) => formatter(Number(v)) : undefined}
+          formatter={tickFormatter ? (v) => tickFormatter(Number(v)) : undefined}
           contentStyle={{ background: "#fff", border: "1px solid #CDE5C1", borderRadius: 8, fontSize: 12 }}
         />
         <Bar dataKey={dataKey} fill={color} radius={[4, 4, 0, 0]} />
