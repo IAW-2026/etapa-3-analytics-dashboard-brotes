@@ -68,6 +68,7 @@ export default function Topbar({
   const hora = new Date(actualizadoEn).toLocaleTimeString("es-AR", {
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "America/Argentina/Buenos_Aires", // agregá esto
   });
 
   const todasOnline = buyerOnline && sellerOnline && paymentsOnline;
