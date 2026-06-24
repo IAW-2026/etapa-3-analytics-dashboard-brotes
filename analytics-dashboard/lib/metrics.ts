@@ -1,5 +1,13 @@
 import type { DashboardData } from "./types";
 
+// ─── Formato de moneda ─────────────────────────────────────────────────────────
+
+export function formatARS(n: number): string {
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`;
+  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
+  return `$${n.toLocaleString("es-AR")}`;
+}
+
 // ─── Usuarios activos ─────────────────────────────────────────────────────────
 // "Activo" = comprador con al menos un pedido no cancelado en los últimos 30 días
 

@@ -7,11 +7,6 @@ import SimpleBarChart from "@/components/charts/BarChart";
 import type { Producto } from "@/lib/types";
 import DonutWithLegend from "@/components/DonutWithLegend";
 
-function formatARS(n: number) {
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toLocaleString("es-AR")}`;
-}
 
 const CAT_COLORS = ["#4C6B3D", "#7BA05D", "#A67C52", "#CDE5C1", "#E07A5F"];
 

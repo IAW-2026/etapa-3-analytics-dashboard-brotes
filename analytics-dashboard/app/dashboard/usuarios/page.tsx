@@ -7,12 +7,6 @@ import SimpleLineChart from "@/components/charts/LineChart";
 import type { Vendedor } from "@/lib/types";
 import DonutWithLegend from "@/components/DonutWithLegend";
 
-function formatARS(n: number) {
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toLocaleString("es-AR")}`;
-}
-
 const vendedoresColumns: {
   key: keyof Vendedor;
   header: string;
