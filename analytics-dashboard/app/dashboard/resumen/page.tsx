@@ -4,12 +4,7 @@ import ChartCard from "@/components/ChartCard";
 import IngresosChart from "@/components/charts/IngresosChart";
 import SimpleBarChart from "@/components/charts/BarChart";
 import DonutWithLegend from "@/components/DonutWithLegend";
-
-function formatARS(n: number) {
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n}`;
-}
+import { formatARS } from "@/lib/metrics";
 
 const ESTADO_COLORS: Record<string, string> = {
   entregado:  "#4C6B3D",

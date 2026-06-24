@@ -7,12 +7,7 @@ import ProgressBar from "@/components/ProgressBar";
 import StackedBarChart from "@/components/charts/StackedBarChart";
 import SimpleBarChart from "@/components/charts/BarChart";
 import type { Transaccion } from "@/lib/types";
-
-function formatARS(n: number) {
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toLocaleString("es-AR")}`;
-}
+import { formatARS } from "@/lib/metrics";
 
 const PROGRESS_VARIANTS = ["default", "green", "brown", "terra"] as const;
 
@@ -165,17 +160,13 @@ export default async function VentasPage() {
       </div>
 
       {/* Tabla transacciones */}
-      <div className="bg-white border border-[#CDE5C1] rounded-xl p-4">
-        <p className="text-sm font-medium text-[#243B27] mb-0.5">Últimas transacciones</p>
-        <p className="text-[11px] text-[#7BA05D] mb-3">
-          Payments App · consolidado con Buyer App
-        </p>
+      <ChartCard title="Últimas transacciones" subtitle="Payments App · consolidado con Buyer App">
         <DataTable
           columns={txColumns}
           data={payments.ultimasTransacciones}
           keyField="id"
         />
-      </div>
+      </ChartCard>
     </div>
   );
 }

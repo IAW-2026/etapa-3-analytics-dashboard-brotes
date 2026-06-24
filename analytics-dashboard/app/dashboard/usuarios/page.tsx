@@ -146,19 +146,17 @@ export default async function UsuariosPage() {
 
       {/* Vendedores: tabla + estado */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 bg-white border border-[#CDE5C1] rounded-xl p-4">
-          <p className="text-sm font-medium text-[#243B27] mb-0.5">
-            Vendedores registrados
-          </p>
-          <p className="text-[11px] text-[#7BA05D] mb-3">
-            Seller App — actividad y métricas
-          </p>
+        <ChartCard
+          title="Vendedores registrados"
+          subtitle="Seller App — actividad y métricas"
+          className="lg:col-span-2"
+        >
           <DataTable
             columns={vendedoresColumns}
             data={seller.vendedores}
             keyField="id"
           />
-        </div>
+        </ChartCard>
 
         <ChartCard title="Estado de vendedores" subtitle="Seller App — distribución de cuentas">
           <DonutWithLegend data={donutVendedoresData} />

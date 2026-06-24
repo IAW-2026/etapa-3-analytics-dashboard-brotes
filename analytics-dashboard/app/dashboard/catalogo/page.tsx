@@ -6,7 +6,7 @@ import SimpleLineChart from "@/components/charts/LineChart";
 import SimpleBarChart from "@/components/charts/BarChart";
 import type { Producto } from "@/lib/types";
 import DonutWithLegend from "@/components/DonutWithLegend";
-
+import { formatARS } from "@/lib/metrics";
 
 const CAT_COLORS = ["#4C6B3D", "#7BA05D", "#A67C52", "#CDE5C1", "#E07A5F"];
 
@@ -152,19 +152,13 @@ export default async function CatalogoPage() {
       </div>
 
       {/* Tabla productos */}
-      <div className="bg-white border border-[#CDE5C1] rounded-xl p-4">
-        <p className="text-sm font-medium text-[#243B27] mb-0.5">
-          Productos más vendidos
-        </p>
-        <p className="text-[11px] text-[#7BA05D] mb-3">
-          Seller App — este mes, ordenados por unidades vendidas
-        </p>
+      <ChartCard title="Productos más vendidos" subtitle="Seller App — este mes, ordenados por unidades vendidas">
         <DataTable
           columns={productosColumns}
           data={seller.topProductos}
           keyField="id"
         />
-      </div>
+      </ChartCard>
     </div>
   );
 }

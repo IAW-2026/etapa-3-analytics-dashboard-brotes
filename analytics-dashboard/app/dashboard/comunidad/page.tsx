@@ -256,19 +256,13 @@ export default async function ComunidadPage() {
       </div>
 
       {/* Tabla hilos */}
-      <div className="bg-white border border-[#CDE5C1] rounded-xl p-4">
-        <p className="text-sm font-medium text-[#243B27] mb-0.5">
-          Hilos más activos del foro
-        </p>
-        <p className="text-[11px] text-[#7BA05D] mb-3">
-          Buyer App — ordenados por respuestas recibidas
-        </p>
+      <ChartCard title="Hilos más activos del foro" subtitle="Buyer App — ordenados por respuestas recibidas">
         <DataTable
           columns={hilosColumns}
           data={buyer.hilosForo}
           keyField="id"
         />
-      </div>
+      </ChartCard>
     </div>
   );
 }
