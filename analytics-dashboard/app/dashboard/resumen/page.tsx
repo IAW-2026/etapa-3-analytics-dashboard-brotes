@@ -1,4 +1,9 @@
-import { fetchBuyerStats, fetchDashboardData, fetchPaymentsStats, fetchSellerStats } from "@/lib/api";
+import {
+  fetchBuyerStats,
+  fetchDashboardData,
+  fetchPaymentsStats,
+  fetchSellerStats,
+} from "@/lib/api";
 import KpiCard from "@/components/KpiCard";
 import ChartCard from "@/components/ChartCard";
 import IngresosChart from "@/components/charts/IngresosChart";
@@ -8,23 +13,31 @@ import OfflineBanner from "@/components/OfflineBanner";
 import { formatARS } from "@/lib/metrics";
 
 const ESTADO_COLORS: Record<string, string> = {
-  entregada:      "#4C6B3D",
-  listo:          "#7BA05D",
-  confirmada:     "#A67C52",
-  pendiente:      "#CDE5C1",
+  entregada: "#4C6B3D",
+  listo: "#7BA05D",
+  confirmada: "#A67C52",
+  pendiente: "#CDE5C1",
   en_preparacion: "#7BA05D",
-  caducada:       "#E07A5F",
+  caducada: "#E07A5F",
 };
 
 const CAT_COLORS = ["#4C6B3D", "#7BA05D", "#A67C52", "#D9D9D4", "#E07A5F"];
 
 export default async function ResumenPage() {
-  const [{ data: buyer, status: bs }, { data: seller, status: ss }, { data: payments, status: ps }] = await Promise.all([
+  const [
+    { data: buyer, status: bs },
+    { data: seller, status: ss },
+    { data: payments, status: ps },
+  ] = await Promise.all([
     fetchBuyerStats(),
     fetchSellerStats(),
     fetchPaymentsStats(),
   ]);
-const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online, paymentsAppOnline: ps.online };
+  const meta = {
+    buyerAppOnline: bs.online,
+    sellerAppOnline: ss.online,
+    paymentsAppOnline: ps.online,
+  };
 
   const donutData = buyer.distribucionEstadosPedidos.map((d) => ({
     label: d.estado,
@@ -42,13 +55,18 @@ const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online, paymentsAp
     porcentaje: c.porcentaje,
     color: CAT_COLORS[i] ?? "#D9D9D4",
   }));
-
+  console.log("ingresos confirmados preformato:", payments.ingresosConfirmados);
+  console.log(
+    "ingresos confirmados preformato:",
+    formatARS(payments.ingresosConfirmados),
+  );
   return (
     <div>
       <div className="mb-5">
         <h1 className="text-lg font-medium text-[#243B27]">Resumen general</h1>
         <p className="text-xs text-[#4C6B3D]">
-          Vista consolidada de las tres aplicaciones del sistema — Buyer · Seller · Payments
+          Vista consolidada de las tres aplicaciones del sistema — Buyer ·
+          Seller · Payments
         </p>
       </div>
 
@@ -62,7 +80,10 @@ const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online, paymentsAp
           { label: "Seller App", cls: "bg-[#D9D9D4] text-[#243B27]" },
           { label: "Payments App", cls: "bg-[#E8E2D6] text-[#243B27]" },
         ].map((b) => (
-          <span key={b.label} className={`text-[11px] font-medium px-3 py-1 rounded-full ${b.cls}`}>
+          <span
+            key={b.label}
+            className={`text-[11px] font-medium px-3 py-1 rounded-full ${b.cls}`}
+          >
             {b.label}
           </span>
         ))}
@@ -78,7 +99,9 @@ const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online, paymentsAp
         />
         <KpiCard
           label="Pedidos totales"
-          value={buyer.distribucionEstadosPedidos.reduce((s, d) => s + d.cantidad, 0).toLocaleString("es-AR")}
+          value={buyer.distribucionEstadosPedidos
+            .reduce((s, d) => s + d.cantidad, 0)
+            .toLocaleString("es-AR")}
           delta="+12% vs mes anterior"
           deltaType="up"
         />
@@ -121,7 +144,10 @@ const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online, paymentsAp
           </ChartCard>
         </div>
 
-        <ChartCard title="Estado de pedidos" subtitle="Buyer App — distribución actual">
+        <ChartCard
+          title="Estado de pedidos"
+          subtitle="Buyer App — distribución actual"
+        >
           <DonutWithLegend data={donutData} capitalizeLabels />
         </ChartCard>
       </div>
@@ -146,7 +172,10 @@ const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online, paymentsAp
           subtitle="Seller App — ventas por tipo de producto"
         >
           <SimpleBarChart
-            data={catData.map((c) => ({ categoria: c.categoria, porcentaje: c.porcentaje }))}
+            data={catData.map((c) => ({
+              categoria: c.categoria,
+              porcentaje: c.porcentaje,
+            }))}
             dataKey="porcentaje"
             labelKey="categoria"
             color="#4C6B3D"
