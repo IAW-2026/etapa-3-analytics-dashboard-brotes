@@ -3,6 +3,7 @@ import type { DashboardData } from "./types";
 // ─── Formato de moneda ─────────────────────────────────────────────────────────
 
 export function formatARS(n: number): string {
+  console.log("preformato:", n);
   if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`;
   if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
   return `$${n.toLocaleString("es-AR")}`;
@@ -12,10 +13,10 @@ export function formatARS(n: number): string {
 // "Activo" = comprador con al menos un pedido no cancelado en los últimos 30 días
 
 export interface UsuariosActivosMetrica {
-  compradoresActivos: number;           // del campo directo de BuyerStats
-  porcentajeActivos: number;            // sobre el total
+  compradoresActivos: number; // del campo directo de BuyerStats
+  porcentajeActivos: number; // sobre el total
   compradoresConPedidosRecientes: number; // pedidos en últimos 30 días
-  tasaRetencion: number;                // activos / total * 100
+  tasaRetencion: number; // activos / total * 100
   tendenciaSemanal: {
     semana: string;
     nuevos: number;
@@ -24,7 +25,7 @@ export interface UsuariosActivosMetrica {
 }
 
 export function calcularUsuariosActivos(
-  data: DashboardData
+  data: DashboardData,
 ): UsuariosActivosMetrica {
   const { buyer } = data;
 
@@ -39,7 +40,7 @@ export function calcularUsuariosActivos(
 
   // IDs únicos de compradores con pedidos recientes
   const compradoresConPedidosRecientes = new Set(
-    pedidosRecientes.map((p) => p.compradorId)
+    pedidosRecientes.map((p) => p.compradorId),
   ).size;
 
   const porcentajeActivos =
@@ -91,7 +92,7 @@ export function calcularResumenMetricas(data: DashboardData): ResumenMetricas {
 
   const totalPedidos = data.buyer.distribucionEstadosPedidos.reduce(
     (s, d) => s + d.cantidad,
-    0
+    0,
   );
   const pedidosEntregados =
     data.buyer.distribucionEstadosPedidos.find((d) => d.estado === "entregada")
