@@ -55,7 +55,7 @@ export default async function ResumenPage() {
     porcentaje: c.porcentaje,
     color: CAT_COLORS[i] ?? "#D9D9D4",
   }));
-  console.log(payments.ingresosConfirmados);
+  console.log("ingresos confirmados preformato:", payments.ingresosConfirmados);
   return (
     <div>
       <div className="mb-5">
