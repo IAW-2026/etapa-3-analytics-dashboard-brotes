@@ -5,7 +5,9 @@ const BUYER_APP_URL = process.env.BUYER_APP_URL;
 const SELLER_APP_URL = process.env.SELLER_APP_URL;
 const PAYMENTS_APP_URL = process.env.PAYMENTS_APP_URL;
 
-const ANALYTICS_API_KEY = process.env.ANALYTICS_API_KEY ?? "dev-key";
+const BUYER_APP_API_KEY = process.env.BUYER_APP_API_KEY;
+const SELLER_APP_API_KEY = process.env.SELLER_APP_API_KEY;
+const PAYMENTS_APP_API_KEY = process.env.PAYMENTS_APP_API_KEY;
 
 const FETCH_TIMEOUT_MS = 5000;
 
@@ -42,6 +44,7 @@ async function fetchWithTimeout(
 
 async function safeGet<T>(
   url: string | undefined,
+  apiKey: string | undefined,
   fallback: T,
   label: string
 ): Promise<{ data: T; status: AppStatus }> {
@@ -56,9 +59,14 @@ async function safeGet<T>(
 
   const t0 = Date.now();
 
+  const headers: Record<string, string> = {};
+  if (apiKey) {
+    headers["x-api-key"] = apiKey;
+  }
+
   try {
     const res = await fetchWithTimeout(`${url}/api/analytics`, {
-      headers: { "x-api-key": ANALYTICS_API_KEY },
+      headers,
       next: { revalidate: 60 },
     });
 
@@ -115,15 +123,15 @@ async function safeGet<T>(
 // ─── Fetchers individuales ────────────────────────────────────────────────────
 
 export async function fetchBuyerStats(): Promise<{ data: BuyerStats; status: AppStatus }> {
-  return safeGet<BuyerStats>(BUYER_APP_URL, mockBuyerStats, "Buyer App");
+  return safeGet<BuyerStats>(BUYER_APP_URL, BUYER_APP_API_KEY, mockBuyerStats, "Buyer App");
 }
 
 export async function fetchSellerStats(): Promise<{ data: SellerStats; status: AppStatus }> {
-  return safeGet<SellerStats>(SELLER_APP_URL, mockSellerStats, "Seller App");
+  return safeGet<SellerStats>(SELLER_APP_URL, SELLER_APP_API_KEY, mockSellerStats, "Seller App");
 }
 
 export async function fetchPaymentsStats(): Promise<{ data: PaymentsStats; status: AppStatus }> {
-  return safeGet<PaymentsStats>(PAYMENTS_APP_URL, mockPaymentsStats, "Payments App");
+  return safeGet<PaymentsStats>(PAYMENTS_APP_URL, PAYMENTS_APP_API_KEY, mockPaymentsStats, "Payments App");
 }
 
 // ─── Consolidado (llama a las tres en paralelo) ───────────────────────────────
