@@ -45,7 +45,7 @@ export default async function ResumenPage() {
   const prevIngreso = ingresosMeses[ingresosMeses.length - 2];
   const deltaIngresos =
     ultimoIngreso && prevIngreso && prevIngreso.ingresos > 0
-      ? `${(((ultimoIngreso.ingresos - prevIngreso.ingresos) / prevIngreso.ingresos) * 100).toFixed(0)}%`
+      ? `${(((ultimoIngreso.ingresos - prevIngreso.ingresos) / prevIngreso.ingresos) * 100).toFixed(0)}% vs mes anterior`
       : undefined;
 
   const sumPedidos = (m: (typeof buyer.pedidosPorMes)[number]) =>
@@ -56,14 +56,14 @@ export default async function ResumenPage() {
   const prevPedido = buyer.pedidosPorMes[buyer.pedidosPorMes.length - 2];
   const deltaPedidos =
     ultimoPedido && prevPedido && sumPedidos(prevPedido) > 0
-      ? `${(((sumPedidos(ultimoPedido) - sumPedidos(prevPedido)) / sumPedidos(prevPedido)) * 100).toFixed(0)}%`
+      ? `${(((sumPedidos(ultimoPedido) - sumPedidos(prevPedido)) / sumPedidos(prevPedido)) * 100).toFixed(0)}% vs mes anterior`
       : undefined;
 
   const regs = buyer.registrosPorSemana;
   const last4 = regs.slice(-4).reduce((s, v) => s + v, 0);
   const prev4 = regs.length >= 8 ? regs.slice(-8, -4).reduce((s, v) => s + v, 0) : 0;
   const deltaCompradores = prev4 > 0
-    ? `${(((last4 - prev4) / prev4) * 100).toFixed(0)}%`
+    ? `${(((last4 - prev4) / prev4) * 100).toFixed(0)}% vs mes anterior`
     : undefined;
 
   const calcEntrega = (m: (typeof buyer.pedidosPorMes)[number]) => {
@@ -73,7 +73,7 @@ export default async function ResumenPage() {
   };
   const deltaEntrega =
     ultimoPedido && prevPedido
-      ? `${(calcEntrega(ultimoPedido) - calcEntrega(prevPedido)).toFixed(1)}%`
+      ? `${(calcEntrega(ultimoPedido) - calcEntrega(prevPedido)).toFixed(1)}% vs mes anterior`
       : undefined;
 
   const donutData = buyer.distribucionEstadosPedidos.map((d) => ({
