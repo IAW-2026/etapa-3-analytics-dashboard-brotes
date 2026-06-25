@@ -184,7 +184,6 @@ export async function fetchSellerStats(): Promise<{ data: SellerStats; status: A
       unidadesProductoMasVendido: p?.unidadesProductoMasVendido ?? mockSellerStats.unidadesProductoMasVendido,
       productosSinStock: p?.productosSinStock ?? mockSellerStats.productosSinStock,
       ventasPorCategoria: p?.ventasPorCategoria ?? mockSellerStats.ventasPorCategoria,
-      evolucionPrecios: mockSellerStats.evolucionPrecios,
       topVendedores: r?.topVendedores?.map((v: any) => ({ nombre: v.nombre, ingresos: v.ingresos })) ?? mockSellerStats.topVendedores,
       topProductos: p?.topProductos?.map((p: any) => ({ ...p, id: String(p.id) })) ?? mockSellerStats.topProductos,
       vendedores: s?.vendedores?.map((v: any) => ({

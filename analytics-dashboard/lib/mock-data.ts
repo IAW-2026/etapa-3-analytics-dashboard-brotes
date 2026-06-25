@@ -81,15 +81,6 @@ export const mockSellerStats: SellerStats = {
     { categoria: "Otros", porcentaje: 13 },
   ],
 
-  evolucionPrecios: [
-    { mes: "Ene", precio: 2410 },
-    { mes: "Feb", precio: 2550 },
-    { mes: "Mar", precio: 2700 },
-    { mes: "Abr", precio: 2870 },
-    { mes: "May", precio: 2930 },
-    { mes: "Jun", precio: 2840 },
-  ],
-
   topVendedores: [
     { nombre: "El Ceibo", ingresos: 892 },
     { nombre: "Raíces Vivas", ingresos: 734 },

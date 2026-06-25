@@ -91,7 +91,6 @@ export interface SellerStats {
   unidadesProductoMasVendido: number;
   productosSinStock: number;
   ventasPorCategoria: { categoria: string; porcentaje: number }[];
-  evolucionPrecios: { mes: string; precio: number }[];
   topVendedores: { nombre: string; ingresos: number }[];
   topProductos: Producto[];
   vendedores: Vendedor[];
