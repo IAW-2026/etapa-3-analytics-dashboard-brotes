@@ -56,6 +56,10 @@ export default async function ResumenPage() {
     color: CAT_COLORS[i] ?? "#D9D9D4",
   }));
   console.log("ingresos confirmados preformato:", payments.ingresosConfirmados);
+  console.log(
+    "ingresos confirmados preformato:",
+    formatARS(payments.ingresosConfirmados),
+  );
   return (
     <div>
       <div className="mb-5">
