@@ -13,11 +13,7 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 
-  const raw = sessionClaims?.metadata;
-  const roles: string[] = Array.isArray(raw)
-    ? raw
-    : (raw as Record<string, unknown> | undefined)?.roles as string[] ?? [];
-
+  const roles = (sessionClaims?.metadata as string[] | undefined) ?? [];
   if (!roles.includes("admin")) {
     return NextResponse.redirect(new URL("/unauthorized", req.url));
   }
