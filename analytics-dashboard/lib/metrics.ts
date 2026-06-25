@@ -34,7 +34,7 @@ export function calcularUsuariosActivos(
   // Pedidos recientes (últimos 30 días, excluyendo cancelados)
   const pedidosRecientes = buyer.ultimosPedidos.filter((p) => {
     const fecha = new Date(p.creadoEn);
-    return fecha >= hace30Dias && p.estado !== "cancelado";
+    return fecha >= hace30Dias && p.estado !== "caducada";
   });
 
   // IDs únicos de compradores con pedidos recientes
@@ -94,7 +94,7 @@ export function calcularResumenMetricas(data: DashboardData): ResumenMetricas {
     0
   );
   const pedidosEntregados =
-    data.buyer.distribucionEstadosPedidos.find((d) => d.estado === "entregado")
+    data.buyer.distribucionEstadosPedidos.find((d) => d.estado === "entregada")
       ?.cantidad ?? 0;
 
   const tasaEntrega =

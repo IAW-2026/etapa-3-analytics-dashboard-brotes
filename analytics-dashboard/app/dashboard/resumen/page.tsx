@@ -8,11 +8,12 @@ import OfflineBanner from "@/components/OfflineBanner";
 import { formatARS } from "@/lib/metrics";
 
 const ESTADO_COLORS: Record<string, string> = {
-  entregado:  "#4C6B3D",
-  enviado:    "#7BA05D",
-  confirmado: "#A67C52",
-  pendiente:  "#CDE5C1",
-  cancelado:  "#E07A5F",
+  entregada:      "#4C6B3D",
+  listo:          "#7BA05D",
+  confirmada:     "#A67C52",
+  pendiente:      "#CDE5C1",
+  en_preparacion: "#7BA05D",
+  caducada:       "#E07A5F",
 };
 
 const CAT_COLORS = ["#4C6B3D", "#7BA05D", "#A67C52", "#D9D9D4", "#E07A5F"];
@@ -95,7 +96,7 @@ const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online, paymentsAp
         />
         <KpiCard
           label="Tasa de entrega"
-          value={`${buyer.distribucionEstadosPedidos.find((d) => d.estado === "entregado")?.porcentaje ?? 0}%`}
+          value={`${buyer.distribucionEstadosPedidos.find((d) => d.estado === "entregada")?.porcentaje ?? 0}%`}
           delta="-2% vs mes anterior"
           deltaType="down"
         />

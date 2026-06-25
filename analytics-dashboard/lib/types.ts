@@ -12,10 +12,11 @@ export interface Comprador {
 
 export type EstadoPedido =
   | "pendiente"
-  | "confirmado"
-  | "enviado"
-  | "entregado"
-  | "cancelado";
+  | "confirmada"
+  | "en_preparacion"
+  | "listo"
+  | "entregada"
+  | "caducada";
 
 export interface Pedido {
   id: string;
@@ -42,12 +43,7 @@ export interface BuyerStats {
   compradoresSuspendidos: number;
   compradoresEliminados: number;
   registrosPorSemana: number[];
-  pedidosPorMes: {
-    mes: string;
-    completados: number;
-    enProceso: number;
-    cancelados: number;
-  }[];
+  pedidosPorMes: Record<string, string | number>[];
   distribucionEstadosPedidos: {
     estado: EstadoPedido;
     cantidad: number;

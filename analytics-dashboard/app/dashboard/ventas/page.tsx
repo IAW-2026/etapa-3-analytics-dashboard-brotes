@@ -51,15 +51,23 @@ export default async function VentasPage() {
 const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online, paymentsAppOnline: ps.online };
 
   const completados = buyer.distribucionEstadosPedidos.find(
-    (d) => d.estado === "entregado"
+    (d) => d.estado === "entregada"
   );
 
-  const pedidosData = buyer.pedidosPorMes.map((m) => ({
-    mes: m.mes,
-    completados: m.completados,
-    "en proceso": m.enProceso,
-    cancelados: m.cancelados,
-  }));
+  const pedidosData = buyer.pedidosPorMes.map((m) => {
+    const entregada = Number(m.entregada ?? 0);
+    const confirmada = Number(m.confirmada ?? 0);
+    const enPreparacion = Number(m.en_preparacion ?? 0);
+    const listo = Number(m.listo ?? 0);
+    const pendiente = Number(m.pendiente ?? 0);
+    const caducada = Number(m.caducada ?? 0);
+    return {
+      mes: m.mes as string,
+      completados: entregada + confirmada,
+      "en proceso": enPreparacion + listo + pendiente,
+      cancelados: caducada,
+    };
+  });
 
   const topVendedoresData = seller.topVendedores.map((v) => ({
     nombre: v.nombre,
