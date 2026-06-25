@@ -1,37 +1,46 @@
-import type { BuyerStats, SellerStats, PaymentsStats, DashboardData } from "./types";
-import { mockBuyerStats, mockSellerStats, mockPaymentsStats } from "./mock-data";
+import type {
+  BuyerStats,
+  SellerStats,
+  PaymentsStats,
+  DashboardData,
+} from "./types";
+import {
+  mockBuyerStats,
+  mockSellerStats,
+  mockPaymentsStats,
+} from "./mock-data";
 
 const BUYER_APP_URL = process.env.BUYER_APP_URL;
 const SELLER_APP_URL = process.env.SELLER_APP_URL;
 const PAYMENTS_APP_URL = process.env.PAYMENTS_APP_URL;
 
-const BUYER_APP_API_KEY = process.env.BUYER_APP_API_KEY;
-const SELLER_APP_API_KEY = process.env.SELLER_APP_API_KEY;
-const PAYMENTS_APP_API_KEY = process.env.PAYMENTS_APP_API_KEY;
+const BUYER_APP_API_KEY = process.env.BUYER_SERVICE_API_KEY;
+const SELLER_APP_API_KEY = process.env.SELLER_SERVICE_API_KEY;
+const PAYMENTS_APP_API_KEY = process.env.PAYMENTS_SERVICE_API_KEY;
 
 const FETCH_TIMEOUT_MS = 5000;
 
 // ─── Tipos de error ───────────────────────────────────────────────────────────
 
 export type FetchErrorReason =
-  | "url_not_configured"  // variable de entorno ausente
-  | "timeout"             // la app tardó más de FETCH_TIMEOUT_MS
-  | "http_error"          // respuesta HTTP no-2xx
-  | "network_error"       // fallo de red / DNS
-  | "parse_error";        // JSON inválido en la respuesta
+  | "url_not_configured" // variable de entorno ausente
+  | "timeout" // la app tardó más de FETCH_TIMEOUT_MS
+  | "http_error" // respuesta HTTP no-2xx
+  | "network_error" // fallo de red / DNS
+  | "parse_error"; // JSON inválido en la respuesta
 
 export interface AppStatus {
   online: boolean;
   errorReason?: FetchErrorReason;
-  errorDetail?: string;    // mensaje técnico para logs
-  latencyMs?: number;      // tiempo de respuesta cuando online
+  errorDetail?: string; // mensaje técnico para logs
+  latencyMs?: number; // tiempo de respuesta cuando online
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 async function fetchWithTimeout(
   url: string,
-  options?: RequestInit
+  options?: RequestInit,
 ): Promise<Response> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
@@ -46,7 +55,7 @@ async function safeGet<T>(
   url: string | undefined,
   apiKey: string | undefined,
   fallback: T,
-  label: string
+  label: string,
 ): Promise<{ data: T; status: AppStatus }> {
   // Caso 1: URL no configurada — esperado en desarrollo
   if (!url) {
@@ -78,7 +87,11 @@ async function safeGet<T>(
       console.warn(`[analytics] ${label}: ${detail}`);
       return {
         data: fallback,
-        status: { online: false, errorReason: "http_error", errorDetail: detail },
+        status: {
+          online: false,
+          errorReason: "http_error",
+          errorDetail: detail,
+        },
       };
     }
 
@@ -91,7 +104,11 @@ async function safeGet<T>(
       console.warn(`[analytics] ${label}: ${detail}`);
       return {
         data: fallback,
-        status: { online: false, errorReason: "parse_error", errorDetail: detail },
+        status: {
+          online: false,
+          errorReason: "parse_error",
+          errorDetail: detail,
+        },
       };
     }
 
@@ -99,15 +116,15 @@ async function safeGet<T>(
       data: json,
       status: { online: true, latencyMs },
     };
-
   } catch (err) {
     const latencyMs = Date.now() - t0;
 
     // Caso 4: Timeout (AbortError) o fallo de red
-    const isTimeout =
-      err instanceof Error && err.name === "AbortError";
+    const isTimeout = err instanceof Error && err.name === "AbortError";
 
-    const errorReason: FetchErrorReason = isTimeout ? "timeout" : "network_error";
+    const errorReason: FetchErrorReason = isTimeout
+      ? "timeout"
+      : "network_error";
     const detail = isTimeout
       ? `Timeout después de ${FETCH_TIMEOUT_MS}ms`
       : `Error de red: ${err}`;
@@ -122,16 +139,40 @@ async function safeGet<T>(
 
 // ─── Fetchers individuales ────────────────────────────────────────────────────
 
-export async function fetchBuyerStats(): Promise<{ data: BuyerStats; status: AppStatus }> {
-  return safeGet<BuyerStats>(BUYER_APP_URL, BUYER_APP_API_KEY, mockBuyerStats, "Buyer App");
+export async function fetchBuyerStats(): Promise<{
+  data: BuyerStats;
+  status: AppStatus;
+}> {
+  return safeGet<BuyerStats>(
+    BUYER_APP_URL,
+    BUYER_APP_API_KEY,
+    mockBuyerStats,
+    "Buyer App",
+  );
 }
 
-export async function fetchSellerStats(): Promise<{ data: SellerStats; status: AppStatus }> {
-  return safeGet<SellerStats>(SELLER_APP_URL, SELLER_APP_API_KEY, mockSellerStats, "Seller App");
+export async function fetchSellerStats(): Promise<{
+  data: SellerStats;
+  status: AppStatus;
+}> {
+  return safeGet<SellerStats>(
+    SELLER_APP_URL,
+    SELLER_APP_API_KEY,
+    mockSellerStats,
+    "Seller App",
+  );
 }
 
-export async function fetchPaymentsStats(): Promise<{ data: PaymentsStats; status: AppStatus }> {
-  return safeGet<PaymentsStats>(PAYMENTS_APP_URL, PAYMENTS_APP_API_KEY, mockPaymentsStats, "Payments App");
+export async function fetchPaymentsStats(): Promise<{
+  data: PaymentsStats;
+  status: AppStatus;
+}> {
+  return safeGet<PaymentsStats>(
+    PAYMENTS_APP_URL,
+    PAYMENTS_APP_API_KEY,
+    mockPaymentsStats,
+    "Payments App",
+  );
 }
 
 // ─── Consolidado (llama a las tres en paralelo) ───────────────────────────────
