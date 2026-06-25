@@ -93,13 +93,14 @@ export interface SellerStats {
 }
 
 // ─── Payments App ─────────────────────────────────────────────────────────────
+export type EstadoPago = "pendiente" | "confirmada" | "rechazada";
 
 export interface Transaccion {
   id: string;
   compradorNombre: string;
   vendedorNombre: string;
   monto: number;
-  estado: EstadoPedido;
+  estado: EstadoPago;
   fecha: string;
   metodoPago: string;
 }
