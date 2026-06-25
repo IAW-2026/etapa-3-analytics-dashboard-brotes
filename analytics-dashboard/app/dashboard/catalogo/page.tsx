@@ -97,7 +97,7 @@ export default async function CatalogoPage() {
         />
         <KpiCard
           label="Producto más vendido"
-          value={seller.productoMasVendido}
+          value={seller.productoMasVendido ?? "Sin ventas"}
           delta={`${seller.unidadesProductoMasVendido} unidades este mes`}
           deltaType="up"
         />
