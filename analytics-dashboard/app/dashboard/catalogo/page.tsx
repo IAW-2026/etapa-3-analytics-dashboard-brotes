@@ -2,7 +2,6 @@ import { fetchDashboardData } from "@/lib/api";
 import KpiCard from "@/components/KpiCard";
 import ChartCard from "@/components/ChartCard";
 import DataTable from "@/components/DataTable";
-import SimpleLineChart from "@/components/charts/LineChart";
 import SimpleBarChart from "@/components/charts/BarChart";
 import type { Producto } from "@/lib/types";
 import DonutWithLegend from "@/components/DonutWithLegend";
@@ -54,10 +53,10 @@ export default async function CatalogoPage() {
     color: CAT_COLORS[i] ?? "#D9D9D4",
   }));
 
-  const preciosData = seller.evolucionPrecios.map((p) => ({
-    mes: p.mes,
-    precio: p.precio,
-  }));
+  // Ranking de vendedores por cantidad de productos publicados
+  const topVendedoresPorCatalogo = [...seller.vendedores]
+    .sort((a, b) => b.totalProductos - a.totalProductos)
+    .slice(0, 5);
 
   // Ingreso total por categoría derivado de topProductos
   const ingresosPorCat = seller.topProductos.reduce<Record<string, number>>(
@@ -119,18 +118,25 @@ export default async function CatalogoPage() {
         </ChartCard>
 
         <ChartCard
-          title="Evolución del precio promedio"
-          subtitle="Seller App — últimos 6 meses"
+          title="Vendedores con mayor catálogo"
+          subtitle="Seller App — por cantidad de productos publicados"
         >
-          <SimpleLineChart
-            data={preciosData}
-            dataKey="precio"
-            labelKey="mes"
-            color="#A67C52"
-            height={200}
-            filled
-            formatStyle="currency-k"
-          />
+          <div className="space-y-2">
+            {topVendedoresPorCatalogo.map((v, i) => (
+              <div
+                key={v.id}
+                className="flex items-center justify-between text-sm"
+              >
+                <span className="text-[#243B27]">
+                  <span className="text-[#7BA05D] mr-2">{i + 1}.</span>
+                  {v.nombre}
+                </span>
+                <span className="font-medium text-[#4C6B3D]">
+                  {v.totalProductos} productos
+                </span>
+              </div>
+            ))}
+          </div>
         </ChartCard>
       </div>
 
