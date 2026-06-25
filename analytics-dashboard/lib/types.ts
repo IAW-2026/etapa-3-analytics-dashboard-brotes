@@ -43,7 +43,7 @@ export interface BuyerStats {
   compradoresSuspendidos: number;
   compradoresEliminados: number;
   registrosPorSemana: number[];
-  pedidosPorMes: Record<string, string | number>[];
+  pedidosPorMes: { mes: string; [key: string]: unknown }[];
   distribucionEstadosPedidos: {
     estado: EstadoPedido;
     cantidad: number;
