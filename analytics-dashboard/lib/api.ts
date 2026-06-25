@@ -47,10 +47,10 @@ async function fetchWithTimeout(
 async function safeGet<T>(
   url: string | undefined,
   apiKey: string | undefined,
-  fallback: T | null,
+  fallback: T,
   label: string,
   schema?: ZodSchema<T>
-): Promise<{ data: T | null; status: AppStatus }>{
+): Promise<{ data: T; status: AppStatus }> {
   // Caso 1: URL no configurada — esperado en desarrollo
   if (!url) {
     console.info(`[analytics] ${label}: URL no configurada, usando mock`);
@@ -68,7 +68,7 @@ async function safeGet<T>(
   }
 
   try {
-    const res = await fetchWithTimeout(url, {
+    const res = await fetchWithTimeout(`${url}/api/analytics`, {
       headers,
       next: { revalidate: 60 },
     });
@@ -147,62 +147,16 @@ async function safeGet<T>(
 
 // ─── Fetchers individuales ────────────────────────────────────────────────────
 
-/*export async function fetchBuyerStats(): Promise<{ data: BuyerStats; status: AppStatus }> {
-  return safeGet<BuyerStats>(BUYER_APP_URL, BUYER_APP_API_KEY, mockBuyerStats, "Buyer App", buyerStatsSchema);
-}*/
 export async function fetchBuyerStats(): Promise<{ data: BuyerStats; status: AppStatus }> {
-  return { data: mockBuyerStats, status: { online: false, errorReason: "url_not_configured" } };
+  return safeGet<BuyerStats>(BUYER_APP_URL, BUYER_APP_API_KEY, mockBuyerStats, "Buyer App", buyerStatsSchema);
 }
 
 export async function fetchSellerStats(): Promise<{ data: SellerStats; status: AppStatus }> {
-  if (!SELLER_APP_URL) {
-    console.info("[analytics] Seller App: URL no configurada, usando mock");
-    return { data: mockSellerStats, status: { online: false, errorReason: "url_not_configured" } };
-  }
-
-  const t0 = Date.now();
-
-  const [sellersRes, productsRes, revenueRes] = await Promise.all([
-    safeGet(`${SELLER_APP_URL}/api/analytics/sellers`, SELLER_APP_API_KEY, null, "Seller App /sellers"),
-    safeGet(`${SELLER_APP_URL}/api/analytics/products`, SELLER_APP_API_KEY, null, "Seller App /products"),
-    safeGet(`${SELLER_APP_URL}/api/analytics/revenue`, SELLER_APP_API_KEY, null, "Seller App /revenue"),
-  ]);
-
-  const online = sellersRes.status.online || productsRes.status.online || revenueRes.status.online;
-
-  const s = sellersRes.data as any;
-  const p = productsRes.data as any;
-  const r = revenueRes.data as any;
-
-  return {
-    data: {
-      totalVendedores: s?.totalVendedores ?? mockSellerStats.totalVendedores,
-      vendedoresActivos: s?.vendedoresActivos ?? mockSellerStats.vendedoresActivos,
-      totalProductos: p?.totalProductos ?? mockSellerStats.totalProductos,
-      precioPromedio: p?.precioPromedio ?? mockSellerStats.precioPromedio,
-      productoMasVendido: p?.productoMasVendido ?? mockSellerStats.productoMasVendido,
-      unidadesProductoMasVendido: p?.unidadesProductoMasVendido ?? mockSellerStats.unidadesProductoMasVendido,
-      productosSinStock: p?.productosSinStock ?? mockSellerStats.productosSinStock,
-      ventasPorCategoria: p?.ventasPorCategoria ?? mockSellerStats.ventasPorCategoria,
-      evolucionPrecios: mockSellerStats.evolucionPrecios,
-      topVendedores: r?.topVendedores?.map((v: any) => ({ nombre: v.nombre, ingresos: v.ingresos })) ?? mockSellerStats.topVendedores,
-      topProductos: p?.topProductos?.map((p: any) => ({ ...p, id: String(p.id) })) ?? mockSellerStats.topProductos,
-      vendedores: s?.vendedores?.map((v: any) => ({
-        ...v,
-        id: String(v.id),
-        ciudad: v.ciudad ?? "",
-        estado: v.estado === "active" ? "activo" : "inactivo",
-      })) ?? mockSellerStats.vendedores,
-    },
-    status: { online, latencyMs: Date.now() - t0 },
-  };
+  return safeGet<SellerStats>(SELLER_APP_URL, SELLER_APP_API_KEY, mockSellerStats, "Seller App", sellerStatsSchema);
 }
 
-/*export async function fetchPaymentsStats(): Promise<{ data: PaymentsStats; status: AppStatus }> {
-  return safeGet<PaymentsStats>(PAYMENTS_APP_URL, PAYMENTS_APP_API_KEY, mockPaymentsStats, "Payments App", paymentsStatsSchema);
-}*/
 export async function fetchPaymentsStats(): Promise<{ data: PaymentsStats; status: AppStatus }> {
-  return { data: mockPaymentsStats, status: { online: false, errorReason: "url_not_configured" } };
+  return safeGet<PaymentsStats>(PAYMENTS_APP_URL, PAYMENTS_APP_API_KEY, mockPaymentsStats, "Payments App", paymentsStatsSchema);
 }
 
 // ─── Consolidado (llama a las tres en paralelo) ───────────────────────────────
