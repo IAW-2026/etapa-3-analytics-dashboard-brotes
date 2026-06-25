@@ -14,6 +14,7 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   const roles = (sessionClaims?.metadata as string[] | undefined) ?? [];
+  
   if (!roles.includes("admin")) {
     return NextResponse.redirect(new URL("/unauthorized", req.url));
   }
