@@ -1,5 +1,6 @@
 "use client";
 
+import { UserButton } from "@clerk/nextjs";
 import type { FetchErrorReason } from "@/lib/types";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -142,6 +143,23 @@ export default function Topbar() {
               : `Datos parciales · ${hora}`
             : "Conectando..."}
         </span>
+
+        <div className="flex items-center pl-3 border-l border-[#4C6B3D]">
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox:
+                  "w-8 h-8 border-2 border-[#4C6B3D] hover:border-[#7BA05D] transition-colors",
+                userButtonPopoverCard:
+                  "bg-[#EAF3E6] border border-[#CDE5C1] shadow-lg",
+                userButtonPopoverActionButton:
+                  "text-[#243B27] hover:bg-[#CDE5C1]",
+                userButtonPopoverActionButtonText: "text-[#243B27]",
+                userButtonPopoverFooter: "hidden",
+              },
+            }}
+          />
+        </div>
       </div>
     </header>
   );
