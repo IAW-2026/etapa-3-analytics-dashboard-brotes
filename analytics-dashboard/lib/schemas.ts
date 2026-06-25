@@ -1,7 +1,14 @@
 import { z } from "zod";
 
-const estadoPedidoSchema = z.enum(["pendiente", "confirmada", "en_preparacion", "listo", "entregada", "caducada"]);
-
+const estadoPedidoSchema = z.enum([
+  "pendiente",
+  "confirmada",
+  "en_preparacion",
+  "listo",
+  "entregada",
+  "caducada",
+]);
+const estadoPaymentSchema = z.enum(["pendiente", "confirmada", "rechazada"]);
 const pedidoSchema = z.object({
   id: z.string(),
   compradorId: z.string(),
@@ -34,14 +41,16 @@ export const buyerStatsSchema = z.object({
   pedidosPorMes: z.array(pedidosPorMesSchema),
   distribucionEstadosPedidos: z.array(distribucionEstadosSchema),
   ultimosPedidos: z.array(pedidoSchema),
-  hilosForo: z.array(z.object({
-    id: z.string(),
-    titulo: z.string(),
-    autor: z.string(),
-    respuestas: z.number(),
-    likes: z.number(),
-    creadoEn: z.string(),
-  })),
+  hilosForo: z.array(
+    z.object({
+      id: z.string(),
+      titulo: z.string(),
+      autor: z.string(),
+      respuestas: z.number(),
+      likes: z.number(),
+      creadoEn: z.string(),
+    }),
+  ),
   totalHilosForo: z.number(),
   totalRespuestasForo: z.number(),
   usuariosConFavoritos: z.number(),
@@ -107,7 +116,7 @@ const transaccionSchema = z.object({
   compradorNombre: z.string(),
   vendedorNombre: z.string(),
   monto: z.number(),
-  estado: estadoPedidoSchema,
+  estado: estadoPaymentSchema,
   fecha: z.string(),
   metodoPago: z.string(),
 });
