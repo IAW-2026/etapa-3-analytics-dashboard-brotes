@@ -87,7 +87,7 @@ export interface SellerStats {
   vendedoresActivos: number;
   totalProductos: number;
   precioPromedio: number;
-  productoMasVendido: string;
+  productoMasVendido: string | null;
   unidadesProductoMasVendido: number;
   productosSinStock: number;
   ventasPorCategoria: { categoria: string; porcentaje: number }[];
