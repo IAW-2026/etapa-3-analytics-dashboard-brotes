@@ -1,5 +1,7 @@
 import type { BuyerStats, SellerStats, PaymentsStats, DashboardData } from "./types";
 import { mockBuyerStats, mockSellerStats, mockPaymentsStats } from "./mock-data";
+import { buyerStatsSchema, sellerStatsSchema, paymentsStatsSchema } from "./schemas";
+import type { ZodSchema } from "zod";
 
 const BUYER_APP_URL = process.env.BUYER_APP_URL;
 const SELLER_APP_URL = process.env.SELLER_APP_URL;
@@ -46,7 +48,8 @@ async function safeGet<T>(
   url: string | undefined,
   apiKey: string | undefined,
   fallback: T,
-  label: string
+  label: string,
+  schema?: ZodSchema<T>
 ): Promise<{ data: T; status: AppStatus }> {
   // Caso 1: URL no configurada — esperado en desarrollo
   if (!url) {
@@ -145,15 +148,15 @@ async function safeGet<T>(
 // ─── Fetchers individuales ────────────────────────────────────────────────────
 
 export async function fetchBuyerStats(): Promise<{ data: BuyerStats; status: AppStatus }> {
-  return safeGet<BuyerStats>(BUYER_APP_URL, BUYER_APP_API_KEY, mockBuyerStats, "Buyer App");
+  return safeGet<BuyerStats>(BUYER_APP_URL, BUYER_APP_API_KEY, mockBuyerStats, "Buyer App", buyerStatsSchema);
 }
 
 export async function fetchSellerStats(): Promise<{ data: SellerStats; status: AppStatus }> {
-  return safeGet<SellerStats>(SELLER_APP_URL, SELLER_APP_API_KEY, mockSellerStats, "Seller App");
+  return safeGet<SellerStats>(SELLER_APP_URL, SELLER_APP_API_KEY, mockSellerStats, "Seller App", sellerStatsSchema);
 }
 
 export async function fetchPaymentsStats(): Promise<{ data: PaymentsStats; status: AppStatus }> {
-  return safeGet<PaymentsStats>(PAYMENTS_APP_URL, PAYMENTS_APP_API_KEY, mockPaymentsStats, "Payments App");
+  return safeGet<PaymentsStats>(PAYMENTS_APP_URL, PAYMENTS_APP_API_KEY, mockPaymentsStats, "Payments App", paymentsStatsSchema);
 }
 
 // ─── Consolidado (llama a las tres en paralelo) ───────────────────────────────
