@@ -68,7 +68,7 @@ async function safeGet<T>(
   }
 
   try {
-    const res = await fetchWithTimeout(`${url}/api/analytics`, {
+    const res = await fetchWithTimeout(url, {
       headers,
       next: { revalidate: 60 },
     });
