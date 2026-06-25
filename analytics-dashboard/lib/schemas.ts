@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const estadoPedidoSchema = z.enum(["pendiente", "confirmado", "enviado", "entregado", "cancelado"]);
+const estadoPedidoSchema = z.enum(["pendiente", "confirmada", "en_preparacion", "listo", "entregada", "caducada"]);
 
 const pedidoSchema = z.object({
   id: z.string(),
@@ -18,12 +18,7 @@ const distribucionEstadosSchema = z.object({
   porcentaje: z.number(),
 });
 
-const pedidosPorMesSchema = z.object({
-  mes: z.string(),
-  completados: z.number(),
-  enProceso: z.number(),
-  cancelados: z.number(),
-});
+const pedidosPorMesSchema = z.object({ mes: z.string() }).passthrough();
 
 const actividadForoSchema = z.object({
   hilos: z.number(),
