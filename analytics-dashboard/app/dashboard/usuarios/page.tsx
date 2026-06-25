@@ -1,4 +1,4 @@
-import { fetchDashboardData } from "@/lib/api";
+import { fetchBuyerStats, fetchDashboardData, fetchSellerStats } from "@/lib/api";
 import KpiCard from "@/components/KpiCard";
 import ChartCard from "@/components/ChartCard";
 import DataTable from "@/components/DataTable";
@@ -28,7 +28,11 @@ const vendedoresColumns: {
 ];
 
 export default async function UsuariosPage() {
-  const { buyer, seller, meta } = await fetchDashboardData();
+  const [{ data: buyer, status: bs }, { data: seller, status: ss }] = await Promise.all([
+  fetchBuyerStats(),
+  fetchSellerStats(),
+]);
+const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online };
 
   const totalCompradores = buyer.totalCompradores || 1;
   const donutCompradoresData = [

@@ -1,4 +1,4 @@
-import { fetchDashboardData } from "@/lib/api";
+import { fetchDashboardData, fetchSellerStats } from "@/lib/api";
 import KpiCard from "@/components/KpiCard";
 import ChartCard from "@/components/ChartCard";
 import DataTable from "@/components/DataTable";
@@ -46,7 +46,8 @@ const productosColumns: {
 ];
 
 export default async function CatalogoPage() {
-  const { seller, meta } = await fetchDashboardData();
+  const { data: seller, status } = await fetchSellerStats();
+  const meta = { sellerAppOnline: status.online };
 
   const donutData = seller.ventasPorCategoria.map((c, i) => ({
     label: c.categoria,

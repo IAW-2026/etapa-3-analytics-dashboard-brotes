@@ -1,4 +1,4 @@
-import { fetchDashboardData } from "@/lib/api";
+import { fetchBuyerStats, fetchDashboardData, fetchPaymentsStats, fetchSellerStats } from "@/lib/api";
 import KpiCard from "@/components/KpiCard";
 import ChartCard from "@/components/ChartCard";
 import IngresosChart from "@/components/charts/IngresosChart";
@@ -18,7 +18,12 @@ const ESTADO_COLORS: Record<string, string> = {
 const CAT_COLORS = ["#4C6B3D", "#7BA05D", "#A67C52", "#D9D9D4", "#E07A5F"];
 
 export default async function ResumenPage() {
-  const { buyer, seller, payments, meta } = await fetchDashboardData();
+  const [{ data: buyer, status: bs }, { data: seller, status: ss }, { data: payments, status: ps }] = await Promise.all([
+    fetchBuyerStats(),
+    fetchSellerStats(),
+    fetchPaymentsStats(),
+  ]);
+const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online, paymentsAppOnline: ps.online };
 
   const donutData = buyer.distribucionEstadosPedidos.map((d) => ({
     label: d.estado,

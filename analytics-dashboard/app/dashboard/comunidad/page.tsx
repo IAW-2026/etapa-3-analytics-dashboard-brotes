@@ -1,4 +1,4 @@
-import { fetchDashboardData } from "@/lib/api";
+import { fetchBuyerStats, fetchDashboardData } from "@/lib/api";
 import KpiCard from "@/components/KpiCard";
 import ChartCard from "@/components/ChartCard";
 import DataTable from "@/components/DataTable";
@@ -48,7 +48,8 @@ const hilosColumns: {
 ];
 
 export default async function ComunidadPage() {
-  const { buyer, meta } = await fetchDashboardData();
+  const { data: buyer, status } = await fetchBuyerStats();
+  const meta = { buyerAppOnline: status.online };
 
   // Actividad del foro con etiquetas de semana
   const foroData = buyer.actividadForoPorSemana.map((s, i) => ({

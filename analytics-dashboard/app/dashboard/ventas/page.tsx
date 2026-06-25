@@ -1,4 +1,4 @@
-import { fetchDashboardData } from "@/lib/api";
+import { fetchBuyerStats, fetchDashboardData, fetchPaymentsStats, fetchSellerStats } from "@/lib/api";
 import KpiCard from "@/components/KpiCard";
 import ChartCard from "@/components/ChartCard";
 import DataTable from "@/components/DataTable";
@@ -43,7 +43,12 @@ const txColumns: {
 ];
 
 export default async function VentasPage() {
-  const { buyer, seller, payments, meta } = await fetchDashboardData();
+  const [{ data: buyer, status: bs }, { data: seller, status: ss }, { data: payments, status: ps }] = await Promise.all([
+  fetchBuyerStats(),
+  fetchSellerStats(),
+  fetchPaymentsStats(),
+]);
+const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online, paymentsAppOnline: ps.online };
 
   const completados = buyer.distribucionEstadosPedidos.find(
     (d) => d.estado === "entregado"
