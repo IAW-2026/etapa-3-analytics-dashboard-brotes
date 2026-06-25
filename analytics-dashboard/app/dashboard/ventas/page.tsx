@@ -91,8 +91,6 @@ const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online, paymentsAp
         <KpiCard
           label="Ticket promedio"
           value={formatARS(payments.ticketPromedio)}
-          delta="+$240 vs mes anterior"
-          deltaType="up"
         />
         <KpiCard
           label="Pedidos completados"
@@ -103,8 +101,6 @@ const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online, paymentsAp
         <KpiCard
           label="Tasa de cancelación"
           value={`${payments.tasaCancelacion.toFixed(1)}%`}
-          delta="+0.4% vs mes anterior"
-          deltaType="down"
         />
         <KpiCard
           label="Ingresos pendientes"

@@ -35,6 +35,7 @@ export default async function UsuariosPage() {
 const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online };
 
   const totalCompradores = buyer.totalCompradores || 1;
+  const nuevosEsteMes = buyer.registrosPorSemana.slice(-4).reduce((s, v) => s + v, 0);
   const donutCompradoresData = [
     {
       label: "Activos",
@@ -99,7 +100,7 @@ const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online };
         <KpiCard
           label="Total compradores"
           value={buyer.totalCompradores.toLocaleString("es-AR")}
-          delta="+89 este mes"
+          delta={`+${nuevosEsteMes} nuevos este mes`}
           deltaType="up"
         />
         <KpiCard

@@ -39,6 +39,43 @@ export default async function ResumenPage() {
     paymentsAppOnline: ps.online,
   };
 
+  // Deltas dinámicos
+  const ingresosMeses = payments.ingresosUltimosMeses;
+  const ultimoIngreso = ingresosMeses[ingresosMeses.length - 1];
+  const prevIngreso = ingresosMeses[ingresosMeses.length - 2];
+  const deltaIngresos =
+    ultimoIngreso && prevIngreso && prevIngreso.ingresos > 0
+      ? `${(((ultimoIngreso.ingresos - prevIngreso.ingresos) / prevIngreso.ingresos) * 100).toFixed(0)}%`
+      : undefined;
+
+  const sumPedidos = (m: (typeof buyer.pedidosPorMes)[number]) =>
+    Number(m.entregada ?? 0) + Number(m.confirmada ?? 0) +
+    Number(m.en_preparacion ?? 0) + Number(m.listo ?? 0) +
+    Number(m.pendiente ?? 0) + Number(m.caducada ?? 0);
+  const ultimoPedido = buyer.pedidosPorMes[buyer.pedidosPorMes.length - 1];
+  const prevPedido = buyer.pedidosPorMes[buyer.pedidosPorMes.length - 2];
+  const deltaPedidos =
+    ultimoPedido && prevPedido && sumPedidos(prevPedido) > 0
+      ? `${(((sumPedidos(ultimoPedido) - sumPedidos(prevPedido)) / sumPedidos(prevPedido)) * 100).toFixed(0)}%`
+      : undefined;
+
+  const regs = buyer.registrosPorSemana;
+  const last4 = regs.slice(-4).reduce((s, v) => s + v, 0);
+  const prev4 = regs.length >= 8 ? regs.slice(-8, -4).reduce((s, v) => s + v, 0) : 0;
+  const deltaCompradores = prev4 > 0
+    ? `${(((last4 - prev4) / prev4) * 100).toFixed(0)}%`
+    : undefined;
+
+  const calcEntrega = (m: (typeof buyer.pedidosPorMes)[number]) => {
+    const total = sumPedidos(m);
+    const entregados = Number(m.entregada ?? 0) + Number(m.confirmada ?? 0);
+    return total > 0 ? (entregados / total) * 100 : 0;
+  };
+  const deltaEntrega =
+    ultimoPedido && prevPedido
+      ? `${(calcEntrega(ultimoPedido) - calcEntrega(prevPedido)).toFixed(1)}%`
+      : undefined;
+
   const donutData = buyer.distribucionEstadosPedidos.map((d) => ({
     label: d.estado,
     value: d.porcentaje,
@@ -94,22 +131,22 @@ export default async function ResumenPage() {
         <KpiCard
           label="Ingresos confirmados"
           value={formatARS(payments.ingresosConfirmados)}
-          delta="+18% vs mes anterior"
-          deltaType="up"
+          delta={deltaIngresos}
+          deltaType={deltaIngresos?.startsWith("-") ? "down" : deltaIngresos === "0%" ? "neutral" : "up"}
         />
         <KpiCard
           label="Pedidos totales"
           value={buyer.distribucionEstadosPedidos
             .reduce((s, d) => s + d.cantidad, 0)
             .toLocaleString("es-AR")}
-          delta="+12% vs mes anterior"
-          deltaType="up"
+          delta={deltaPedidos}
+          deltaType={deltaPedidos?.startsWith("-") ? "down" : deltaPedidos === "0%" ? "neutral" : "up"}
         />
         <KpiCard
           label="Compradores activos"
           value={buyer.compradoresActivos.toLocaleString("es-AR")}
-          delta={`+7% vs mes anterior`}
-          deltaType="up"
+          delta={deltaCompradores}
+          deltaType={deltaCompradores?.startsWith("-") ? "down" : deltaCompradores === "0%" ? "neutral" : "up"}
         />
         <KpiCard
           label="Vendedores activos"
@@ -120,8 +157,8 @@ export default async function ResumenPage() {
         <KpiCard
           label="Tasa de entrega"
           value={`${buyer.distribucionEstadosPedidos.find((d) => d.estado === "entregada")?.porcentaje ?? 0}%`}
-          delta="-2% vs mes anterior"
-          deltaType="down"
+          delta={deltaEntrega}
+          deltaType={deltaEntrega?.startsWith("-") ? "down" : deltaEntrega === "0%" ? "neutral" : "up"}
         />
       </div>
 

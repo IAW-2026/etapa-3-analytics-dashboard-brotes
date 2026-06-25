@@ -132,20 +132,6 @@ async function safeGet<T>(
       json = result.data;
     }
 
-    if (label === "Payments App") {
-      const p = json as unknown as PaymentsStats;
-      console.log("[analytics] Payments App raw:", {
-        ingresosConfirmados: p.ingresosConfirmados,
-        ingresosPendientes: p.ingresosPendientes,
-        metodosPago: p.metodosPago,
-        transacciones: p.ultimasTransacciones.map((t) => ({
-          estado: t.estado,
-          monto: t.monto,
-          metodoPago: t.metodoPago,
-        })),
-      });
-    }
-
     return { data: json, status: { online: true, latencyMs } };
   } catch (err) {
     const latencyMs = Date.now() - t0;

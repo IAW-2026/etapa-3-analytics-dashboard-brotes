@@ -107,7 +107,7 @@ export default async function ComunidadPage() {
         <KpiCard
           label="Usuarios con favoritos"
           value={buyer.usuariosConFavoritos.toLocaleString("es-AR")}
-          delta="82% de los compradores activos"
+          delta={`${Math.round((buyer.usuariosConFavoritos / (buyer.compradoresActivos || 1)) * 100)}% de los compradores activos`}
           deltaType="up"
         />
         <KpiCard

@@ -86,14 +86,10 @@ export default async function CatalogoPage() {
         <KpiCard
           label="Productos activos"
           value={seller.totalProductos.toLocaleString("es-AR")}
-          delta="+34 este mes"
-          deltaType="up"
         />
         <KpiCard
           label="Precio promedio"
           value={formatARS(seller.precioPromedio)}
-          delta="-$90 vs mes anterior"
-          deltaType="down"
         />
         <KpiCard
           label="Producto más vendido"
