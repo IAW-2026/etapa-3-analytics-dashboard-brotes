@@ -29,20 +29,21 @@ const vendedoresColumns: {
 export default async function UsuariosPage() {
   const { buyer, seller } = await fetchDashboardData();
 
+  const totalCompradores = buyer.totalCompradores || 1;
   const donutCompradoresData = [
     {
       label: "Activos",
-      value: Math.round((buyer.compradoresActivos / buyer.totalCompradores) * 100),
+      value: Math.round((buyer.compradoresActivos / totalCompradores) * 100),
       color: "#4C6B3D",
     },
     {
       label: "Suspendidos",
-      value: Math.round((buyer.compradoresSuspendidos / buyer.totalCompradores) * 100),
+      value: Math.round((buyer.compradoresSuspendidos / totalCompradores) * 100),
       color: "#A67C52",
     },
     {
       label: "Eliminados",
-      value: Math.round((buyer.compradoresEliminados / buyer.totalCompradores) * 100),
+      value: Math.round((buyer.compradoresEliminados / totalCompradores) * 100),
       color: "#D9D9D4",
     },
   ];
@@ -97,7 +98,7 @@ export default async function UsuariosPage() {
           label="Compradores activos"
           value={buyer.compradoresActivos.toLocaleString("es-AR")}
           delta={`${Math.round(
-            (buyer.compradoresActivos / buyer.totalCompradores) * 100
+            (buyer.compradoresActivos / totalCompradores) * 100
           )}% del total`}
           deltaType="neutral"
         />
@@ -105,7 +106,7 @@ export default async function UsuariosPage() {
           label="Suspendidos"
           value={String(buyer.compradoresSuspendidos)}
           delta={`${(
-            (buyer.compradoresSuspendidos / buyer.totalCompradores) *
+            (buyer.compradoresSuspendidos / totalCompradores) *
             100
           ).toFixed(1)}% del total`}
           deltaType="down"
@@ -114,7 +115,7 @@ export default async function UsuariosPage() {
           label="Eliminados"
           value={String(buyer.compradoresEliminados)}
           delta={`${Math.round(
-            (buyer.compradoresEliminados / buyer.totalCompradores) * 100
+            (buyer.compradoresEliminados / totalCompradores) * 100
           )}% del total`}
           deltaType="neutral"
         />

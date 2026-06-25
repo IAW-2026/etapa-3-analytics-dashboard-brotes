@@ -61,7 +61,7 @@ async function safeGet<T>(
 
   const headers: Record<string, string> = {};
   if (apiKey) {
-    headers["x-api-key"] = apiKey;
+    headers["Authorization"] = `Bearer ${apiKey}`;
   }
 
   try {

@@ -6,6 +6,8 @@
     "BUYER_APP_URL": "",
     "SELLER_APP_URL": "",
     "PAYMENTS_APP_URL": "",
-    "ANALYTICS_API_KEY": ""
+    "BUYER_APP_API_KEY": "",
+    "SELLER_APP_API_KEY": "",
+    "PAYMENTS_APP_API_KEY": ""
   }
 }
