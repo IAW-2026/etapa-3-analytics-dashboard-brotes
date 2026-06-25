@@ -2,11 +2,8 @@ import { fetchDashboardData } from "@/lib/api";
 import KpiCard from "@/components/KpiCard";
 import ChartCard from "@/components/ChartCard";
 import DataTable from "@/components/DataTable";
-import ProgressBar from "@/components/ProgressBar";
 import GroupedBarChart from "@/components/charts/GroupedBarChart";
 import type { HiloForo } from "@/lib/types";
-
-const PROGRESS_VARIANTS = ["default", "green", "brown", "terra"] as const;
 
 const hilosColumns: {
   key: keyof HiloForo;
@@ -84,7 +81,7 @@ export default async function ComunidadPage() {
       <div className="mb-5">
         <h1 className="text-lg font-medium text-[#243B27]">Comunidad</h1>
         <p className="text-xs text-[#4C6B3D]">
-          Foro, asistente IA y notificaciones — Buyer App
+          Foro y comunidad — Buyer App
         </p>
       </div>
 
@@ -100,12 +97,6 @@ export default async function ComunidadPage() {
           label="Respuestas totales"
           value={buyer.totalRespuestasForo.toLocaleString("es-AR")}
           delta={`+${totalRespuestasSemana} esta semana`}
-          deltaType="up"
-        />
-        <KpiCard
-          label="Consultas al asistente IA"
-          value={buyer.consultasAsistenteIA.toLocaleString("es-AR")}
-          delta="+340 esta semana"
           deltaType="up"
         />
         <KpiCard
@@ -172,22 +163,6 @@ export default async function ComunidadPage() {
             ]}
             height={200}
           />
-        </ChartCard>
-
-        <ChartCard
-          title="Consultas al asistente IA"
-          subtitle="Buyer App — por categoría de planta"
-        >
-          <div className="mt-2">
-            {buyer.categoriasMasConsultadasIA.map((c, i) => (
-              <ProgressBar
-                key={c.categoria}
-                label={c.categoria}
-                value={c.porcentaje}
-                variant={PROGRESS_VARIANTS[i % PROGRESS_VARIANTS.length]}
-              />
-            ))}
-          </div>
         </ChartCard>
       </div>
 

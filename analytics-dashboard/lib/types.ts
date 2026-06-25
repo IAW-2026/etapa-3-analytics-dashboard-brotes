@@ -57,9 +57,7 @@ export interface BuyerStats {
   hilosForo: HiloForo[];
   totalHilosForo: number;
   totalRespuestasForo: number;
-  consultasAsistenteIA: number;
   usuariosConFavoritos: number;
-  categoriasMasConsultadasIA: { categoria: string; porcentaje: number }[];
   actividadForoPorSemana: { hilos: number; respuestas: number }[];
 }
 

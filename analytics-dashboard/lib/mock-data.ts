@@ -50,15 +50,7 @@ export const mockBuyerStats: BuyerStats = {
 
   totalHilosForo: 312,
   totalRespuestasForo: 1847,
-  consultasAsistenteIA: 2391,
   usuariosConFavoritos: 689,
-
-  categoriasMasConsultadasIA: [
-    { categoria: "Plantas de interior", porcentaje: 38 },
-    { categoria: "Suculentas y cactus", porcentaje: 29 },
-    { categoria: "Plantas de exterior", porcentaje: 18 },
-    { categoria: "Otras / fuera de contexto", porcentaje: 15 },
-  ],
 
   actividadForoPorSemana: [
     { hilos: 8, respuestas: 42 },

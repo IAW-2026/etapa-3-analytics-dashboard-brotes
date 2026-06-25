@@ -26,7 +26,6 @@ Mapeo de endpoints existentes vs. datos que necesita el dashboard, y propuesta d
 | `ultimosPedidos` (lista c/ datos completos) | Ventas (tabla) |
 | `hilosForo` (top hilos) + `totalHilosForo` + `totalRespuestasForo` | Comunidad |
 | `actividadForoPorSemana` (últimas 8 semanas) | Comunidad |
-| `consultasAsistenteIA`, `categoriasMasConsultadasIA` | Comunidad |
 | `usuariosConFavoritos` | Comunidad |
 
 ### Endpoints nuevos necesarios en Buyer App
@@ -39,10 +38,7 @@ GET /api/analytics/orders
   → pedidosPorMes, distribucionEstadosPedidos, ultimosPedidos
 
 GET /api/analytics/forum
-  → hilosForo, totalHilosForo, totalRespuestasForo, actividadForoPorSemana
-
-GET /api/analytics/ai-assistant
-  → consultasAsistenteIA, categoriasMasConsultadasIA, usuariosConFavoritos
+  → hilosForo, totalHilosForo, totalRespuestasForo, actividadForoPorSemana, usuariosConFavoritos
 ```
 
 ---
@@ -129,8 +125,7 @@ GET /api/analytics/transactions
 |-----|---------------|-------------------|
 | **Buyer** | `GET /api/analytics/buyers` | Total/activos/suspendidos/eliminados, registros semanales |
 | **Buyer** | `GET /api/analytics/orders` | Pedidos por mes, distribución estados, últimos pedidos |
-| **Buyer** | `GET /api/analytics/forum` | Hilos, respuestas, actividad semanal |
-| **Buyer** | `GET /api/analytics/ai-assistant` | Consultas IA, categorías, favoritos |
+| **Buyer** | `GET /api/analytics/forum` | Hilos, respuestas, actividad semanal, favoritos |
 | **Seller** | `GET /api/analytics/sellers` | Vendedores c/ estado + ventas, totales |
 | **Seller** | `GET /api/analytics/products` | Productos, precios, categorías, top productos |
 | **Seller** | `GET /api/analytics/revenue` | Top vendedores por ingresos |
