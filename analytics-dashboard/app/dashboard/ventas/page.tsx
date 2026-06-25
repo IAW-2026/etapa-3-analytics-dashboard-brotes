@@ -6,6 +6,7 @@ import EstadoBadge from "@/components/EstadoBadge";
 import ProgressBar from "@/components/ProgressBar";
 import StackedBarChart from "@/components/charts/StackedBarChart";
 import SimpleBarChart from "@/components/charts/BarChart";
+import OfflineBanner from "@/components/OfflineBanner";
 import type { Transaccion } from "@/lib/types";
 import { formatARS } from "@/lib/metrics";
 
@@ -42,7 +43,7 @@ const txColumns: {
 ];
 
 export default async function VentasPage() {
-  const { buyer, seller, payments } = await fetchDashboardData();
+  const { buyer, seller, payments, meta } = await fetchDashboardData();
 
   const completados = buyer.distribucionEstadosPedidos.find(
     (d) => d.estado === "entregado"
@@ -68,6 +69,9 @@ export default async function VentasPage() {
           Análisis de transacciones desde Payments App y Buyer App
         </p>
       </div>
+
+      {!meta.buyerAppOnline && <OfflineBanner appName="Buyer App" />}
+      {!meta.paymentsAppOnline && <OfflineBanner appName="Payments App" />}
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">

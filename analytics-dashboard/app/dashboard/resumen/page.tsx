@@ -4,6 +4,7 @@ import ChartCard from "@/components/ChartCard";
 import IngresosChart from "@/components/charts/IngresosChart";
 import SimpleBarChart from "@/components/charts/BarChart";
 import DonutWithLegend from "@/components/DonutWithLegend";
+import OfflineBanner from "@/components/OfflineBanner";
 import { formatARS } from "@/lib/metrics";
 
 const ESTADO_COLORS: Record<string, string> = {
@@ -17,7 +18,7 @@ const ESTADO_COLORS: Record<string, string> = {
 const CAT_COLORS = ["#4C6B3D", "#7BA05D", "#A67C52", "#D9D9D4", "#E07A5F"];
 
 export default async function ResumenPage() {
-  const { buyer, seller, payments } = await fetchDashboardData();
+  const { buyer, seller, payments, meta } = await fetchDashboardData();
 
   const donutData = buyer.distribucionEstadosPedidos.map((d) => ({
     label: d.estado,
@@ -44,6 +45,10 @@ export default async function ResumenPage() {
           Vista consolidada de las tres aplicaciones del sistema — Buyer · Seller · Payments
         </p>
       </div>
+
+      {!meta.buyerAppOnline && <OfflineBanner appName="Buyer App" />}
+      {!meta.sellerAppOnline && <OfflineBanner appName="Seller App" />}
+      {!meta.paymentsAppOnline && <OfflineBanner appName="Payments App" />}
 
       <div className="flex gap-2 mb-5 flex-wrap">
         {[

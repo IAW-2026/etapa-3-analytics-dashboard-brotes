@@ -14,7 +14,7 @@ export default function SignInPage() {
         </p>
       </div>
 
-      <SignIn />
+      <SignIn fallbackRedirectUrl="/dashboard/resumen" />
     </main>
   );
 }

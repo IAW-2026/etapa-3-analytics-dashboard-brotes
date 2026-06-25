@@ -4,6 +4,7 @@ import ChartCard from "@/components/ChartCard";
 import DataTable from "@/components/DataTable";
 import EstadoBadge from "@/components/EstadoBadge";
 import SimpleLineChart from "@/components/charts/LineChart";
+import OfflineBanner from "@/components/OfflineBanner";
 import type { Vendedor } from "@/lib/types";
 import DonutWithLegend from "@/components/DonutWithLegend";
 
@@ -27,7 +28,7 @@ const vendedoresColumns: {
 ];
 
 export default async function UsuariosPage() {
-  const { buyer, seller } = await fetchDashboardData();
+  const { buyer, seller, meta } = await fetchDashboardData();
 
   const totalCompradores = buyer.totalCompradores || 1;
   const donutCompradoresData = [
@@ -85,6 +86,9 @@ export default async function UsuariosPage() {
           Compradores y vendedores — Buyer App + Seller App
         </p>
       </div>
+
+      {!meta.buyerAppOnline && <OfflineBanner appName="Buyer App" />}
+      {!meta.sellerAppOnline && <OfflineBanner appName="Seller App" />}
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">

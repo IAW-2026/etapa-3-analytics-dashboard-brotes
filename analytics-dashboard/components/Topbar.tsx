@@ -1,5 +1,8 @@
+"use client";
+
 import type { FetchErrorReason } from "@/lib/types";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 const ERROR_LABELS: Record<FetchErrorReason, string> = {
   url_not_configured: "sin configurar",
@@ -9,14 +12,30 @@ const ERROR_LABELS: Record<FetchErrorReason, string> = {
   parse_error:        "respuesta inválida",
 };
 
-interface StatusDotProps {
+interface StatusInfo {
+  buyerAppOnline: boolean;
+  sellerAppOnline: boolean;
+  paymentsAppOnline: boolean;
+  actualizadoEn: string;
+  buyerError?: FetchErrorReason;
+  sellerError?: FetchErrorReason;
+  paymentsError?: FetchErrorReason;
+  buyerLatencyMs?: number;
+  sellerLatencyMs?: number;
+  paymentsLatencyMs?: number;
+}
+
+function StatusDot({
+  online,
+  label,
+  errorReason,
+  latencyMs,
+}: {
   online: boolean;
   label: string;
   errorReason?: FetchErrorReason;
   latencyMs?: number;
-}
-
-function StatusDot({ online, label, errorReason, latencyMs }: StatusDotProps) {
+}) {
   const tooltip = online
     ? latencyMs !== undefined ? `${latencyMs}ms` : undefined
     : errorReason ? ERROR_LABELS[errorReason] : "offline";
@@ -41,38 +60,44 @@ function StatusDot({ online, label, errorReason, latencyMs }: StatusDotProps) {
   );
 }
 
-interface TopbarProps {
-  buyerOnline: boolean;
-  sellerOnline: boolean;
-  paymentsOnline: boolean;
-  actualizadoEn: string;
-  buyerError?: FetchErrorReason;
-  sellerError?: FetchErrorReason;
-  paymentsError?: FetchErrorReason;
-  buyerLatencyMs?: number;
-  sellerLatencyMs?: number;
-  paymentsLatencyMs?: number;
-}
+export default function Topbar() {
+  const [status, setStatus] = useState<StatusInfo | null>(null);
 
-export default function Topbar({
-  buyerOnline,
-  sellerOnline,
-  paymentsOnline,
-  actualizadoEn,
-  buyerError,
-  sellerError,
-  paymentsError,
-  buyerLatencyMs,
-  sellerLatencyMs,
-  paymentsLatencyMs,
-}: TopbarProps) {
-  const hora = new Date(actualizadoEn).toLocaleTimeString("es-AR", {
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "America/Argentina/Buenos_Aires", // agregá esto
-  });
+  useEffect(() => {
+    let cancelled = false;
+    async function fetchStatus() {
+      try {
+        const res = await fetch("/api/status");
+        const data = await res.json();
+        if (!cancelled) setStatus(data);
+      } catch {
+        if (!cancelled) setStatus(null);
+      }
+    }
+    fetchStatus();
+    const interval = setInterval(fetchStatus, 30_000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
 
-  const todasOnline = buyerOnline && sellerOnline && paymentsOnline;
+  const todasOnline = status
+    ? status.buyerAppOnline && status.sellerAppOnline && status.paymentsAppOnline
+    : false;
+
+  const usandoMock =
+    status?.buyerError === "url_not_configured" ||
+    status?.sellerError === "url_not_configured" ||
+    status?.paymentsError === "url_not_configured";
+
+  const hora = status
+    ? new Date(status.actualizadoEn).toLocaleTimeString("es-AR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "America/Argentina/Buenos_Aires",
+      })
+    : "--";
 
   return (
     <header className="bg-[#243B27] flex items-center justify-between px-6 h-13 flex-shrink-0">
@@ -85,27 +110,37 @@ export default function Topbar({
       </div>
 
       <div className="flex items-center gap-4">
+        {usandoMock && (
+          <span className="text-[10px] bg-[#4C6B3D] text-[#CDE5C1] px-2 py-0.5 rounded-full font-medium">
+            Datos simulados
+          </span>
+        )}
+
         <StatusDot
-          online={buyerOnline}
+          online={status?.buyerAppOnline ?? false}
           label="Buyer"
-          errorReason={buyerError}
-          latencyMs={buyerLatencyMs}
+          errorReason={status?.buyerError}
+          latencyMs={status?.buyerLatencyMs}
         />
         <StatusDot
-          online={sellerOnline}
+          online={status?.sellerAppOnline ?? false}
           label="Seller"
-          errorReason={sellerError}
-          latencyMs={sellerLatencyMs}
+          errorReason={status?.sellerError}
+          latencyMs={status?.sellerLatencyMs}
         />
         <StatusDot
-          online={paymentsOnline}
+          online={status?.paymentsAppOnline ?? false}
           label="Payments"
-          errorReason={paymentsError}
-          latencyMs={paymentsLatencyMs}
+          errorReason={status?.paymentsError}
+          latencyMs={status?.paymentsLatencyMs}
         />
 
         <span className="text-[#4C6B3D] text-xs hidden sm:block">
-          {todasOnline ? `Actualizado ${hora}` : `Datos parciales · ${hora}`}
+          {status
+            ? todasOnline
+              ? `Actualizado ${hora}`
+              : `Datos parciales · ${hora}`
+            : "Conectando..."}
         </span>
       </div>
     </header>

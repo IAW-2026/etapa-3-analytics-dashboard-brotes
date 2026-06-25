@@ -3,6 +3,7 @@ import KpiCard from "@/components/KpiCard";
 import ChartCard from "@/components/ChartCard";
 import DataTable from "@/components/DataTable";
 import SimpleBarChart from "@/components/charts/BarChart";
+import OfflineBanner from "@/components/OfflineBanner";
 import type { Producto } from "@/lib/types";
 import DonutWithLegend from "@/components/DonutWithLegend";
 import { formatARS } from "@/lib/metrics";
@@ -45,7 +46,7 @@ const productosColumns: {
 ];
 
 export default async function CatalogoPage() {
-  const { seller } = await fetchDashboardData();
+  const { seller, meta } = await fetchDashboardData();
 
   const donutData = seller.ventasPorCategoria.map((c, i) => ({
     label: c.categoria,
@@ -77,6 +78,8 @@ export default async function CatalogoPage() {
         <p className="text-xs text-[#4C6B3D]">Productos y stock — Seller App</p>
       </div>
 
+      {!meta.sellerAppOnline && <OfflineBanner appName="Seller App" />}
+
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
         <KpiCard
@@ -101,7 +104,7 @@ export default async function CatalogoPage() {
           label="Sin stock"
           value={String(seller.productosSinStock)}
           delta={`${(
-            (seller.productosSinStock / seller.totalProductos) *
+            (seller.productosSinStock / (seller.totalProductos || 1)) *
             100
           ).toFixed(1)}% del catálogo`}
           deltaType="down"

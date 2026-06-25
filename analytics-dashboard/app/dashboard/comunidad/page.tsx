@@ -3,6 +3,7 @@ import KpiCard from "@/components/KpiCard";
 import ChartCard from "@/components/ChartCard";
 import DataTable from "@/components/DataTable";
 import GroupedBarChart from "@/components/charts/GroupedBarChart";
+import OfflineBanner from "@/components/OfflineBanner";
 import type { HiloForo } from "@/lib/types";
 
 const hilosColumns: {
@@ -47,7 +48,7 @@ const hilosColumns: {
 ];
 
 export default async function ComunidadPage() {
-  const { buyer } = await fetchDashboardData();
+  const { buyer, meta } = await fetchDashboardData();
 
   // Actividad del foro con etiquetas de semana
   const foroData = buyer.actividadForoPorSemana.map((s, i) => ({
@@ -84,6 +85,8 @@ export default async function ComunidadPage() {
           Foro y comunidad — Buyer App
         </p>
       </div>
+
+      {!meta.buyerAppOnline && <OfflineBanner appName="Buyer App" />}
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
