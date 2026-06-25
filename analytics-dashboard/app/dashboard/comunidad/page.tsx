@@ -27,15 +27,6 @@ const hilosColumns: {
     ),
   },
   {
-    key: "likes",
-    header: "Likes",
-    render: (r) => (
-      <span className="flex items-center gap-1 text-[#A67C52]">
-        ♥ {r.likes}
-      </span>
-    ),
-  },
-  {
     key: "creadoEn",
     header: "Fecha",
     render: (r) =>
