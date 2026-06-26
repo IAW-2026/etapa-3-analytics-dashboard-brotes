@@ -7,6 +7,7 @@ import OfflineBanner from "@/components/OfflineBanner";
 import type { Producto } from "@/lib/types";
 import DonutWithLegend from "@/components/DonutWithLegend";
 import { formatARS } from "@/lib/metrics";
+import { formatCategory } from "@/lib/formatters";
 
 const CAT_COLORS = ["#4C6B3D", "#7BA05D", "#A67C52", "#CDE5C1", "#E07A5F"];
 
@@ -20,7 +21,11 @@ const productosColumns: {
     header: "Producto",
     render: (r) => <strong>{r.nombre}</strong>,
   },
-  { key: "categoria", header: "Categoría" },
+  { 
+    key: "categoria", 
+    header: "Categoría",
+    render: (r) => formatCategory(r.categoria), 
+  },
   { key: "vendedorNombre", header: "Vendedor" },
   {
     key: "precio",
@@ -50,7 +55,7 @@ export default async function CatalogoPage() {
   const meta = { sellerAppOnline: status.online };
 
   const donutData = seller.ventasPorCategoria.map((c, i) => ({
-    label: c.categoria,
+    label: formatCategory(c.categoria),
     value: c.porcentaje,
     color: CAT_COLORS[i] ?? "#D9D9D4",
   }));
@@ -70,7 +75,10 @@ export default async function CatalogoPage() {
   );
   const ingresosCatData = Object.entries(ingresosPorCat)
     .sort((a, b) => b[1] - a[1])
-    .map(([categoria, total]) => ({ categoria, total }));
+    .map(([categoria, total]) => ({
+      categoria: formatCategory(categoria), // ← acá
+      total,
+    }));
 
   return (
     <div>
