@@ -3,6 +3,7 @@ interface KpiCardProps {
   value: string;
   delta?: string;
   deltaType?: "up" | "down" | "neutral";
+  tooltip?: string;
 }
 
 export default function KpiCard({
@@ -10,6 +11,7 @@ export default function KpiCard({
   value,
   delta,
   deltaType = "neutral",
+  tooltip,
 }: KpiCardProps) {
   const deltaColor =
     deltaType === "up"
@@ -19,7 +21,7 @@ export default function KpiCard({
         : "text-[#7BA05D]";
 
   return (
-    <div className="bg-white border border-[#CDE5C1] rounded-xl p-4">
+    <div className="bg-white border border-[#CDE5C1] rounded-xl p-4" title={tooltip}>
       <p className="text-[10px] font-medium tracking-widest uppercase text-[#7BA05D] mb-1.5">
         {label}
       </p>

@@ -74,6 +74,26 @@ const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online, paymentsAp
     ingresos: v.ingresos,
   }));
 
+  // Fase 2: Avg ticket real (ingresos del último mes ÷ pedidos completados del último mes)
+  const ultimoMesPedidos = buyer.pedidosPorMes[buyer.pedidosPorMes.length - 1];
+  const ultimoMesIngresos = payments.ingresosUltimosMeses[payments.ingresosUltimosMeses.length - 1];
+  const lastMonthCompleted = ultimoMesPedidos
+    ? Number(ultimoMesPedidos.entregada ?? 0) + Number(ultimoMesPedidos.confirmada ?? 0)
+    : 0;
+  const realAvgTicket = lastMonthCompleted > 0 && ultimoMesIngresos
+    ? Math.round(ultimoMesIngresos.ingresos / lastMonthCompleted)
+    : null;
+
+  // Delivery rate del último mes
+  const lastMonthTotal = ultimoMesPedidos
+    ? Number(ultimoMesPedidos.entregada ?? 0) + Number(ultimoMesPedidos.confirmada ?? 0) +
+      Number(ultimoMesPedidos.en_preparacion ?? 0) + Number(ultimoMesPedidos.listo ?? 0) +
+      Number(ultimoMesPedidos.pendiente ?? 0) + Number(ultimoMesPedidos.caducada ?? 0)
+    : 0;
+  const lastMonthDelivery = lastMonthTotal > 0 && ultimoMesPedidos
+    ? ((Number(ultimoMesPedidos.entregada ?? 0) + Number(ultimoMesPedidos.confirmada ?? 0)) / lastMonthTotal * 100).toFixed(1)
+    : null;
+
   return (
     <div>
       <div className="mb-5">
@@ -91,12 +111,14 @@ const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online, paymentsAp
         <KpiCard
           label="Ticket promedio"
           value={formatARS(payments.ticketPromedio)}
+          tooltip={realAvgTicket ? `Promedio real (ingresos ÷ pedidos completados): ${formatARS(realAvgTicket)}` : undefined}
         />
         <KpiCard
           label="Pedidos completados"
           value={String(completados?.cantidad ?? 0)}
           delta={`${completados?.porcentaje ?? 0}% del total`}
           deltaType="neutral"
+          tooltip={lastMonthDelivery ? `Tasa de entrega último mes: ${lastMonthDelivery}%` : undefined}
         />
         <KpiCard
           label="Tasa de cancelación"

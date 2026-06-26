@@ -15,6 +15,7 @@ import {
   buyerStatsSchema,
 } from "./schemas";
 import type { ZodSchema } from "zod";
+import { normalizarPaymentsStats, validarIngresosConfirmados } from "./metrics";
 
 const BUYER_APP_URL = process.env.BUYER_APP_URL;
 const SELLER_APP_URL = process.env.SELLER_APP_URL;
@@ -182,13 +183,18 @@ export async function fetchPaymentsStats(): Promise<{
   data: PaymentsStats;
   status: AppStatus;
 }> {
-  return safeGet<PaymentsStats>(
+  const result = await safeGet<PaymentsStats>(
     PAYMENTS_APP_URL,
     PAYMENTS_APP_API_KEY,
     mockPaymentsStats,
     "Payments App",
     paymentsStatsSchema,
   );
+
+  const data = normalizarPaymentsStats(result.data);
+  if (result.status.online) validarIngresosConfirmados(data);
+
+  return { data, status: result.status };
 }
 
 // ─── Consolidado ──────────────────────────────────────────────────────────────

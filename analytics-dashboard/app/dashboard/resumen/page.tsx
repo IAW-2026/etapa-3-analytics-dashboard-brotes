@@ -1,6 +1,5 @@
 import {
   fetchBuyerStats,
-  fetchDashboardData,
   fetchPaymentsStats,
   fetchSellerStats,
 } from "@/lib/api";
@@ -10,8 +9,13 @@ import IngresosChart from "@/components/charts/IngresosChart";
 import SimpleBarChart from "@/components/charts/BarChart";
 import DonutWithLegend from "@/components/DonutWithLegend";
 import OfflineBanner from "@/components/OfflineBanner";
-import { formatARS } from "@/lib/metrics";
 import { formatCategory } from "@/components/charts/formatters";
+import {
+  formatARS,
+  detectarAnomalias,
+  proyectarSiguienteMes,
+  calcularRunRateAnual,
+} from "@/lib/metrics";
 
 const ESTADO_COLORS: Record<string, string> = {
   entregada: "#4C6B3D",
@@ -50,9 +54,12 @@ export default async function ResumenPage() {
       : undefined;
 
   const sumPedidos = (m: (typeof buyer.pedidosPorMes)[number]) =>
-    Number(m.entregada ?? 0) + Number(m.confirmada ?? 0) +
-    Number(m.en_preparacion ?? 0) + Number(m.listo ?? 0) +
-    Number(m.pendiente ?? 0) + Number(m.caducada ?? 0);
+    Number(m.entregada ?? 0) +
+    Number(m.confirmada ?? 0) +
+    Number(m.en_preparacion ?? 0) +
+    Number(m.listo ?? 0) +
+    Number(m.pendiente ?? 0) +
+    Number(m.caducada ?? 0);
   const ultimoPedido = buyer.pedidosPorMes[buyer.pedidosPorMes.length - 1];
   const prevPedido = buyer.pedidosPorMes[buyer.pedidosPorMes.length - 2];
   const deltaPedidos =
@@ -62,10 +69,12 @@ export default async function ResumenPage() {
 
   const regs = buyer.registrosPorSemana;
   const last4 = regs.slice(-4).reduce((s, v) => s + v, 0);
-  const prev4 = regs.length >= 8 ? regs.slice(-8, -4).reduce((s, v) => s + v, 0) : 0;
-  const deltaCompradores = prev4 > 0
-    ? `${(((last4 - prev4) / prev4) * 100).toFixed(0)}% vs mes anterior`
-    : undefined;
+  const prev4 =
+    regs.length >= 8 ? regs.slice(-8, -4).reduce((s, v) => s + v, 0) : 0;
+  const deltaCompradores =
+    prev4 > 0
+      ? `${(((last4 - prev4) / prev4) * 100).toFixed(0)}% vs mes anterior`
+      : undefined;
 
   const calcEntrega = (m: (typeof buyer.pedidosPorMes)[number]) => {
     const total = sumPedidos(m);
@@ -76,6 +85,13 @@ export default async function ResumenPage() {
     ultimoPedido && prevPedido
       ? `${(calcEntrega(ultimoPedido) - calcEntrega(prevPedido)).toFixed(1)}% vs mes anterior`
       : undefined;
+
+  // Fase 3: Anomalías y proyección
+  const anomalias = detectarAnomalias(ingresosMeses);
+  const proyeccion = proyectarSiguienteMes(ingresosMeses);
+
+  // Fase 2: Run rate anual
+  const runRateAnual = calcularRunRateAnual(ingresosMeses);
 
   const donutData = buyer.distribucionEstadosPedidos.map((d) => ({
     label: d.estado,
@@ -93,11 +109,7 @@ export default async function ResumenPage() {
     porcentaje: c.porcentaje,
     color: CAT_COLORS[i] ?? "#D9D9D4",
   }));
-  console.log("ingresos confirmados preformato:", payments.ingresosConfirmados);
-  console.log(
-    "ingresos confirmados preformato:",
-    formatARS(payments.ingresosConfirmados),
-  );
+
   return (
     <div>
       <div className="mb-5">
@@ -133,7 +145,14 @@ export default async function ResumenPage() {
           label="Ingresos confirmados"
           value={formatARS(payments.ingresosConfirmados)}
           delta={deltaIngresos}
-          deltaType={deltaIngresos?.startsWith("-") ? "down" : deltaIngresos === "0%" ? "neutral" : "up"}
+          deltaType={
+            deltaIngresos?.startsWith("-")
+              ? "down"
+              : deltaIngresos === "0%"
+                ? "neutral"
+                : "up"
+          }
+          tooltip={`Run rate anual: ${formatARS(runRateAnual)}`}
         />
         <KpiCard
           label="Pedidos totales"
@@ -141,13 +160,25 @@ export default async function ResumenPage() {
             .reduce((s, d) => s + d.cantidad, 0)
             .toLocaleString("es-AR")}
           delta={deltaPedidos}
-          deltaType={deltaPedidos?.startsWith("-") ? "down" : deltaPedidos === "0%" ? "neutral" : "up"}
+          deltaType={
+            deltaPedidos?.startsWith("-")
+              ? "down"
+              : deltaPedidos === "0%"
+                ? "neutral"
+                : "up"
+          }
         />
         <KpiCard
           label="Compradores activos"
           value={buyer.compradoresActivos.toLocaleString("es-AR")}
           delta={deltaCompradores}
-          deltaType={deltaCompradores?.startsWith("-") ? "down" : deltaCompradores === "0%" ? "neutral" : "up"}
+          deltaType={
+            deltaCompradores?.startsWith("-")
+              ? "down"
+              : deltaCompradores === "0%"
+                ? "neutral"
+                : "up"
+          }
         />
         <KpiCard
           label="Vendedores activos"
@@ -159,7 +190,13 @@ export default async function ResumenPage() {
           label="Tasa de entrega"
           value={`${buyer.distribucionEstadosPedidos.find((d) => d.estado === "entregada")?.porcentaje ?? 0}%`}
           delta={deltaEntrega}
-          deltaType={deltaEntrega?.startsWith("-") ? "down" : deltaEntrega === "0%" ? "neutral" : "up"}
+          deltaType={
+            deltaEntrega?.startsWith("-")
+              ? "down"
+              : deltaEntrega === "0%"
+                ? "neutral"
+                : "up"
+          }
         />
       </div>
 
@@ -177,8 +214,18 @@ export default async function ResumenPage() {
               <span className="flex items-center gap-1.5 text-[11px] text-[#4C6B3D]">
                 <span className="w-2 h-2 rounded-sm bg-[#7BA05D]" /> Meta
               </span>
+              {proyeccion && (
+                <span className="flex items-center gap-1.5 text-[11px] text-[#A67C52]">
+                  <span className="w-2 h-2 rounded-sm bg-[#A67C52]" />{" "}
+                  Proyección
+                </span>
+              )}
             </div>
-            <IngresosChart data={payments.ingresosUltimosMeses} />
+            <IngresosChart
+              data={payments.ingresosUltimosMeses}
+              anomalias={anomalias}
+              proyeccion={proyeccion}
+            />
           </ChartCard>
         </div>
 
@@ -211,7 +258,7 @@ export default async function ResumenPage() {
         >
           <SimpleBarChart
             data={catData.map((c) => ({
-              categoria: formatCategory(c.categoria),
+              categoria: c.categoria,
               porcentaje: c.porcentaje,
             }))}
             dataKey="porcentaje"
