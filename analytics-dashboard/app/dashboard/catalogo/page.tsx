@@ -7,7 +7,7 @@ import OfflineBanner from "@/components/OfflineBanner";
 import type { Producto } from "@/lib/types";
 import DonutWithLegend from "@/components/DonutWithLegend";
 import { formatARS } from "@/lib/metrics";
-import { formatCategory } from "@/lib/formatters";
+import { formatCategory } from "@/components/charts/formatters";
 
 const CAT_COLORS = ["#4C6B3D", "#7BA05D", "#A67C52", "#CDE5C1", "#E07A5F"];
 
