@@ -11,6 +11,7 @@ import SimpleBarChart from "@/components/charts/BarChart";
 import DonutWithLegend from "@/components/DonutWithLegend";
 import OfflineBanner from "@/components/OfflineBanner";
 import { formatARS } from "@/lib/metrics";
+import { formatCategory } from "@/components/charts/formatters";
 
 const ESTADO_COLORS: Record<string, string> = {
   entregada: "#4C6B3D",
@@ -210,7 +211,7 @@ export default async function ResumenPage() {
         >
           <SimpleBarChart
             data={catData.map((c) => ({
-              categoria: c.categoria,
+              categoria: formatCategory(c.categoria),
               porcentaje: c.porcentaje,
             }))}
             dataKey="porcentaje"
@@ -218,7 +219,7 @@ export default async function ResumenPage() {
             color="#4C6B3D"
             height={180}
             horizontal
-            formatStyle="currency-k"
+            formatStyle="percent"
           />
         </ChartCard>
       </div>
