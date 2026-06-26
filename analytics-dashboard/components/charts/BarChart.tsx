@@ -38,7 +38,7 @@ export default function SimpleBarChart({
         <BarChart
           data={data}
           layout="vertical"
-          margin={{ top: 4, right: 16, left: 0, bottom: 0 }}
+          margin={{ top: 4, right: 16, left: 8, bottom: 0 }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#EAF3E6" horizontal={false} />
           <XAxis
@@ -54,7 +54,7 @@ export default function SimpleBarChart({
             tick={{ fontSize: 10, fill: "#7BA05D" }}
             axisLine={false}
             tickLine={false}
-            width={72}
+            width={110}
           />
           <Tooltip
             formatter={tickFormatter ? (v) => tickFormatter(Number(v)) : undefined}
