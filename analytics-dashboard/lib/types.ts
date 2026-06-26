@@ -1,0 +1,144 @@
+// ─── Buyer App ────────────────────────────────────────────────────────────────
+
+export type EstadoComprador = "activo" | "suspendido" | "eliminado";
+
+export interface Comprador {
+  id: string;
+  nombre: string;
+  email: string;
+  estado: EstadoComprador;
+  creadoEn: string;
+}
+
+export type EstadoPedido =
+  | "pendiente"
+  | "confirmada"
+  | "en_preparacion"
+  | "listo"
+  | "entregada"
+  | "caducada";
+
+export interface Pedido {
+  id: string;
+  compradorId: string;
+  compradorNombre: string;
+  vendedorNombre: string;
+  monto: number;
+  estado: EstadoPedido;
+  creadoEn: string;
+}
+
+export interface HiloForo {
+  id: string;
+  titulo: string;
+  autor: string;
+  respuestas: number;
+  likes: number;
+  creadoEn: string;
+}
+
+export interface BuyerStats {
+  totalCompradores: number;
+  compradoresActivos: number;
+  compradoresSuspendidos: number;
+  compradoresEliminados: number;
+  registrosPorSemana: number[];
+  pedidosPorMes: { mes: string; [key: string]: unknown }[];
+  distribucionEstadosPedidos: {
+    estado: EstadoPedido;
+    cantidad: number;
+    porcentaje: number;
+  }[];
+  ultimosPedidos: Pedido[];
+  hilosForo: HiloForo[];
+  totalHilosForo: number;
+  totalRespuestasForo: number;
+  usuariosConFavoritos: number;
+  actividadForoPorSemana: { hilos: number; respuestas: number }[];
+}
+
+// ─── Seller App ───────────────────────────────────────────────────────────────
+
+export interface Vendedor {
+  id: string;
+  nombre: string;
+  ciudad: string;
+  totalProductos: number;
+  ventasMes: number;
+  estado: "activo" | "inactivo";
+}
+
+export interface Producto {
+  id: string;
+  nombre: string;
+  categoria: string;
+  vendedorNombre: string;
+  precio: number;
+  unidadesVendidas: number;
+  ingresoTotal: number;
+}
+
+export interface SellerStats {
+  totalVendedores: number;
+  vendedoresActivos: number;
+  totalProductos: number;
+  precioPromedio: number;
+  productoMasVendido: string | null;
+  unidadesProductoMasVendido: number;
+  productosSinStock: number;
+  ventasPorCategoria: { categoria: string; porcentaje: number }[];
+  topVendedores: { nombre: string; ingresos: number }[];
+  topProductos: Producto[];
+  vendedores: Vendedor[];
+}
+
+// ─── Payments App ─────────────────────────────────────────────────────────────
+export type EstadoPago = "pendiente" | "confirmada" | "rechazada";
+
+export interface Transaccion {
+  id: string;
+  compradorNombre: string;
+  vendedorNombre: string;
+  monto: number;
+  estado: EstadoPago;
+  fecha: string;
+  metodoPago: string;
+}
+
+export interface PaymentsStats {
+  ingresosConfirmados: number;
+  ingresosUltimosMeses: { mes: string; ingresos: number; meta: number }[];
+  ticketPromedio: number;
+  tasaCancelacion: number;
+  ingresosPendientes: number;
+  metodosPago: { metodo: string; porcentaje: number }[];
+  ultimasTransacciones: Transaccion[];
+}
+
+// ─── Consolidado ──────────────────────────────────────────────────────────────
+
+export type FetchErrorReason =
+  | "url_not_configured"
+  | "timeout"
+  | "http_error"
+  | "network_error"
+  | "parse_error";
+
+export interface DashboardData {
+  buyer: BuyerStats;
+  seller: SellerStats;
+  payments: PaymentsStats;
+  meta: {
+    buyerAppOnline: boolean;
+    sellerAppOnline: boolean;
+    paymentsAppOnline: boolean;
+    actualizadoEn: string;
+    // Info de error y latencia por app (opcionales, presentes cuando offline)
+    buyerError?: FetchErrorReason;
+    sellerError?: FetchErrorReason;
+    paymentsError?: FetchErrorReason;
+    buyerLatencyMs?: number;
+    sellerLatencyMs?: number;
+    paymentsLatencyMs?: number;
+  };
+}

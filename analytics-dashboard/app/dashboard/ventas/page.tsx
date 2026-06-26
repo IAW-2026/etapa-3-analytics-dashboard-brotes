@@ -1,0 +1,207 @@
+import { fetchBuyerStats, fetchDashboardData, fetchPaymentsStats, fetchSellerStats } from "@/lib/api";
+import KpiCard from "@/components/KpiCard";
+import ChartCard from "@/components/ChartCard";
+import DataTable from "@/components/DataTable";
+import EstadoBadge from "@/components/EstadoBadge";
+import ProgressBar from "@/components/ProgressBar";
+import StackedBarChart from "@/components/charts/StackedBarChart";
+import SimpleBarChart from "@/components/charts/BarChart";
+import OfflineBanner from "@/components/OfflineBanner";
+import type { Transaccion } from "@/lib/types";
+import { formatARS } from "@/lib/metrics";
+
+const PROGRESS_VARIANTS = ["default", "green", "brown", "terra"] as const;
+
+const txColumns: {
+  key: keyof Transaccion;
+  header: string;
+  render?: (row: Transaccion) => React.ReactNode;
+}[] = [
+  { key: "id", header: "ID pedido" },
+  { key: "compradorNombre", header: "Comprador" },
+  { key: "vendedorNombre", header: "Vendedor" },
+  {
+    key: "monto",
+    header: "Monto",
+    render: (row) => <span className="font-medium">{formatARS(row.monto)}</span>,
+  },
+  {
+    key: "estado",
+    header: "Estado",
+    render: (row) => <EstadoBadge estado={row.estado} />,
+  },
+  {
+    key: "fecha",
+    header: "Fecha",
+    render: (row) =>
+      new Date(row.fecha).toLocaleDateString("es-AR", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }),
+  },
+];
+
+export default async function VentasPage() {
+  const [{ data: buyer, status: bs }, { data: seller, status: ss }, { data: payments, status: ps }] = await Promise.all([
+  fetchBuyerStats(),
+  fetchSellerStats(),
+  fetchPaymentsStats(),
+]);
+const meta = { buyerAppOnline: bs.online, sellerAppOnline: ss.online, paymentsAppOnline: ps.online };
+
+  const completados = buyer.distribucionEstadosPedidos.find(
+    (d) => d.estado === "entregada"
+  );
+
+  const pedidosData = buyer.pedidosPorMes.map((m) => {
+    const entregada = Number(m.entregada ?? 0);
+    const confirmada = Number(m.confirmada ?? 0);
+    const enPreparacion = Number(m.en_preparacion ?? 0);
+    const listo = Number(m.listo ?? 0);
+    const pendiente = Number(m.pendiente ?? 0);
+    const caducada = Number(m.caducada ?? 0);
+    return {
+      mes: m.mes as string,
+      completados: entregada + confirmada,
+      "en proceso": enPreparacion + listo + pendiente,
+      cancelados: caducada,
+    };
+  });
+
+  const topVendedoresData = seller.topVendedores.map((v) => ({
+    nombre: v.nombre,
+    ingresos: v.ingresos,
+  }));
+
+  // Fase 2: Avg ticket real (ingresos del último mes ÷ pedidos completados del último mes)
+  const ultimoMesPedidos = buyer.pedidosPorMes[buyer.pedidosPorMes.length - 1];
+  const ultimoMesIngresos = payments.ingresosUltimosMeses[payments.ingresosUltimosMeses.length - 1];
+  const lastMonthCompleted = ultimoMesPedidos
+    ? Number(ultimoMesPedidos.entregada ?? 0) + Number(ultimoMesPedidos.confirmada ?? 0)
+    : 0;
+  const realAvgTicket = lastMonthCompleted > 0 && ultimoMesIngresos
+    ? Math.round(ultimoMesIngresos.ingresos / lastMonthCompleted)
+    : null;
+
+  // Delivery rate del último mes
+  const lastMonthTotal = ultimoMesPedidos
+    ? Number(ultimoMesPedidos.entregada ?? 0) + Number(ultimoMesPedidos.confirmada ?? 0) +
+      Number(ultimoMesPedidos.en_preparacion ?? 0) + Number(ultimoMesPedidos.listo ?? 0) +
+      Number(ultimoMesPedidos.pendiente ?? 0) + Number(ultimoMesPedidos.caducada ?? 0)
+    : 0;
+  const lastMonthDelivery = lastMonthTotal > 0 && ultimoMesPedidos
+    ? ((Number(ultimoMesPedidos.entregada ?? 0) + Number(ultimoMesPedidos.confirmada ?? 0)) / lastMonthTotal * 100).toFixed(1)
+    : null;
+
+  return (
+    <div>
+      <div className="mb-5">
+        <h1 className="text-lg font-medium text-[#243B27]">Ventas y pedidos</h1>
+        <p className="text-xs text-[#4C6B3D]">
+          Análisis de transacciones desde Payments App y Buyer App
+        </p>
+      </div>
+
+      {!meta.buyerAppOnline && <OfflineBanner appName="Buyer App" />}
+      {!meta.paymentsAppOnline && <OfflineBanner appName="Payments App" />}
+
+      {/* KPIs */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+        <KpiCard
+          label="Ticket promedio"
+          value={formatARS(payments.ticketPromedio)}
+          tooltip={realAvgTicket ? `Promedio real (ingresos ÷ pedidos completados): ${formatARS(realAvgTicket)}` : undefined}
+        />
+        <KpiCard
+          label="Pedidos completados"
+          value={String(completados?.cantidad ?? 0)}
+          delta={`${completados?.porcentaje ?? 0}% del total`}
+          deltaType="neutral"
+          tooltip={lastMonthDelivery ? `Tasa de entrega último mes: ${lastMonthDelivery}%` : undefined}
+        />
+        <KpiCard
+          label="Tasa de cancelación"
+          value={`${payments.tasaCancelacion.toFixed(1)}%`}
+        />
+        <KpiCard
+          label="Ingresos pendientes"
+          value={formatARS(payments.ingresosPendientes)}
+          delta="pedidos en tránsito"
+          deltaType="neutral"
+        />
+      </div>
+
+      {/* Pedidos apilados */}
+      <div className="mb-4">
+        <ChartCard
+          title="Volumen de pedidos — últimos 6 meses"
+          subtitle="Buyer App · desglosado por estado"
+        >
+          <div className="flex gap-4 mb-3">
+            {[
+              { label: "Completados", color: "#4C6B3D" },
+              { label: "En proceso", color: "#7BA05D" },
+              { label: "Cancelados", color: "#E07A5F" },
+            ].map((s) => (
+              <span
+                key={s.label}
+                className="flex items-center gap-1.5 text-[11px] text-[#4C6B3D]"
+              >
+                <span className="w-2 h-2 rounded-sm" style={{ background: s.color }} />
+                {s.label}
+              </span>
+            ))}
+          </div>
+          <StackedBarChart
+            data={pedidosData}
+            labelKey="mes"
+            series={[
+              { key: "completados", label: "Completados", color: "#4C6B3D" },
+              { key: "en proceso", label: "En proceso", color: "#7BA05D" },
+              { key: "cancelados", label: "Cancelados", color: "#E07A5F" },
+            ]}
+            height={220}
+          />
+        </ChartCard>
+      </div>
+
+      {/* Fila de dos */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <ChartCard title="Pagos por método" subtitle="Payments App">
+          <div className="mt-2">
+            {payments.metodosPago.map((m, i) => (
+              <ProgressBar
+                key={m.metodo}
+                label={m.metodo}
+                value={m.porcentaje}
+                variant={PROGRESS_VARIANTS[i % PROGRESS_VARIANTS.length]}
+              />
+            ))}
+          </div>
+        </ChartCard>
+
+        <ChartCard title="Top vendedores por ingresos" subtitle="Seller App — este mes">
+          <SimpleBarChart
+            data={topVendedoresData}
+            dataKey="ingresos"
+            labelKey="nombre"
+            color="#4C6B3D"
+            height={180}
+            horizontal
+            formatStyle="currency-k"
+          />
+        </ChartCard>
+      </div>
+
+      {/* Tabla transacciones */}
+      <ChartCard title="Últimas transacciones" subtitle="Payments App · consolidado con Buyer App">
+        <DataTable
+          columns={txColumns}
+          data={payments.ultimasTransacciones}
+          keyField="id"
+        />
+      </ChartCard>
+    </div>
+  );
+}
