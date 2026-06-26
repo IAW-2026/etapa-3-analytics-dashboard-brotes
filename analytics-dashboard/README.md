@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Brotes Analytics Dashboard
 
-## Getting Started
+## Deploy de producción
 
-First, run the development server:
+Pendiente — la aplicación aún no se encuentra deployada.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Usuarios disponibles para pruebas
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Rol | Email | Contraseña |
+| --- | ----- | ---------- |
+| Administrador | `admin+clerk_test@iaw.com` | `iawuser#` |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+El inicio de sesión se realiza mediante Clerk. Solo los usuarios con rol `admin` pueden acceder al dashboard. Al ingresar a la aplicación se redirige a la página de inicio de sesión (`/sign-in`).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Instrucciones de uso
 
-## Learn More
+### Evaluación offline
 
-To learn more about Next.js, take a look at the following resources:
+Si las apps del sistema (Buyer, Seller, Payments) no están disponibles, el dashboard opera con datos mock completos para todas las secciones. Para verificar el comportamiento con datos reales, configurar las URLs y API keys correspondientes en `.env.local`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Descripción del proyecto
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Brotes Analytics Dashboard** es la herramienta de reportes consolidados (Etapa 3) del proyecto **Brotes**, un marketplace de plantas y productos de jardinería desarrollado en el marco del Proyecto IAW 2026. El dashboard consume las APIs de analytics de las tres aplicaciones que componen el sistema —Buyer App, Seller App y Payments App— y presenta métricas clave en un panel de administración unificado.
 
-## Deploy on Vercel
+La aplicación está construida con **Next.js 16** (App Router), **React 19**, **TypeScript**, **Tailwind CSS v4** y **Clerk** para autenticación y autorización. Los gráficos se renderizan con **Recharts** y las respuestas de las APIs se validan en runtime con **Zod**. El diseño sigue la identidad visual de Brotes con una paleta de verdes y tonos tierra.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+El dashboard cuenta con cinco secciones principales: **Resumen General** (KPIs globales y evolución de ingresos), **Ventas y Pedidos** (métricas de facturación y transacciones), **Usuarios** (actividad de compradores y vendedores), **Catálogo** (rendimiento de productos y categorías) y **Comunidad** (actividad en foros). Cada sección incluye indicadores clave, gráficos y tablas con datos actualizados.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Cuando las APIs de las aplicaciones del sistema no están disponibles, el dashboard utiliza datos mock completos que permiten evaluar toda la funcionalidad sin dependencias externas. Esta decisión de diseño asegura que la aplicación pueda ser revisada en cualquier entorno sin requerir la infraestructura completa del sistema Brotes.
+
+## Notas para la corrección
+
+- **Datos mock vs. reales**: El dashboard funciona con datos mock cuando las apps del sistema no están disponibles. Esto permite evaluar la interfaz completa sin necesidad de levantar los otros servicios. No hay un indicador visual de "mock" en la UI (es intencional, para que la experiencia sea idéntica).
+- **Estado de conectividad**: La Topbar muestra indicadores de estado (online/offline) para cada una de las tres apps del sistema.
+- **API de estado**: Existe un endpoint `/api/status` que devuelve la conectividad con cada app, útil para monitoreo.
+- **Responsive**: El dashboard está optimizado para desktop. La navegación lateral y el layout pueden no comportarse correctamente en pantallas pequeñas.
+- **Limitación conocida**: El campo `sessionClaims.metadata` en el middleware tiene un tipo _any_ porque el tipado de Clerk no expone correctamente la estructura de metadatos personalizados.
+- **Commits de debug**: Existen algunos commits con `console.log` y logs de depuración que no fueron eliminados del historial. No afectan la funcionalidad.
